@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SynMuse — Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0A0A0A;
+    --black-soft: #111111;
+    --surface: #181818;
+    --surface-hover: #222222;
+    --surface-active: #2A2A2A;
+    --border: #2A2A2A;
+    --border-hover: #3A3A3A;
+    --text-primary: #F0F0F0;
+    --text-secondary: #999999;
+    --text-muted: #666666;
+    --white: #F0F0F0;
+    --accent: #FFFFFF;
+
+    --font-sans: 'Chakra Petch', system-ui, sans-serif;
+
+    --sidebar-width: 220px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    background: var(--black);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  ::selection {
+    background: rgba(255,255,255,0.15);
+  }
+
+  /* ============================================
+     PAGE SYSTEM
+     ============================================ */
+  .page { display: none; height: 100vh; overflow: hidden; }
+  .page.active { display: flex; }
+  .page-login.active { display: flex; align-items: center; justify-content: center; }
+
+  /* ============================================
+     LOGIN PAGE
+     ============================================ */
+  .login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 48px;
+  }
+
+  .login-brand {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    margin-bottom: 48px;
+  }
+
+  .login-brand span {
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .form-group { margin-bottom: 24px; }
+
+  .form-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--surface);
+    transition: border-color 0.15s;
+    outline: none;
+  }
+
+  .form-input:focus { border-color: var(--text-muted); }
+  .form-input::placeholder { color: var(--text-muted); }
+
+  .btn-primary {
+    width: 100%;
+    padding: 12px 24px;
+    background: var(--white);
+    color: var(--black);
+    border: none;
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .btn-primary:hover { opacity: 0.85; }
+
+  .login-footer {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .login-footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .login-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 28px 0;
+    color: var(--text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .login-divider::before,
+  .login-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .btn-secondary-outline {
+    width: 100%;
+    padding: 12px 24px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+
+  .btn-secondary-outline:hover {
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+  }
+
+  /* ============================================
+     APP LAYOUT
+     ============================================ */
+  .app-layout {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    background: var(--black-soft);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar-brand {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0 24px;
+    margin-bottom: 36px;
+    color: var(--text-primary);
+  }
+
+  .sidebar-brand span {
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .sidebar-nav { flex: 1; }
+
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    padding: 0 24px;
+    margin-bottom: 8px;
+    margin-top: 28px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 24px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.1s;
+    border-left: 2px solid transparent;
+  }
+
+  .nav-item:hover {
+    color: var(--text-primary);
+    background: var(--surface);
+  }
+
+  .nav-item.active {
+    color: var(--text-primary);
+    background: var(--surface-active);
+    border-left-color: var(--white);
+  }
+
+  .nav-icon {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .sidebar-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .sidebar-user { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+
+  .sidebar-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--surface-active);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+
+  .sidebar-user-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .sidebar-user-email { font-size: 11px; color: var(--text-muted); }
+
+  .main {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    padding: 32px 40px;
+    background: var(--black);
+  }
+
+  .main-full {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding: 0;
+    background: var(--black);
+    position: relative;
+  }
+
+  /* ============================================
+     HOME PAGE
+     ============================================ */
+  .home-header { margin-bottom: 32px; }
+
+  .home-header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .home-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .home-column {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .home-column-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .home-column-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+  }
+
+  .home-column-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--surface-active);
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+
+  .home-column-body {
+    padding: 10px;
+    max-height: 520px;
+    overflow-y: auto;
+  }
+
+  .persona-mini {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+
+  .persona-mini:hover {
+    border-color: var(--border-hover);
+    background: var(--surface-hover);
+  }
+
+  .persona-mini-name { font-size: 14px; font-weight: 600; }
+  .persona-mini-demo { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .action-card {
+    padding: 24px 18px;
+    border: 1px dashed var(--border);
+    border-radius: 2px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 6px;
+  }
+
+  .action-card:hover {
+    border-color: var(--text-muted);
+    background: var(--surface-hover);
+  }
+
+  .action-card-icon { font-size: 22px; margin-bottom: 8px; color: var(--text-muted); }
+  .action-card-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .action-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+  .panel-mini {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+
+  .panel-mini:hover { border-color: var(--border-hover); background: var(--surface-hover); }
+
+  .panel-mini-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .panel-mini-personas { display: flex; margin-bottom: 6px; }
+
+  .panel-mini-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: -4px;
+    background: var(--surface-active);
+    color: var(--text-secondary);
+  }
+
+  .panel-mini-avatar:first-child { margin-left: 0; }
+  .panel-mini-meta { font-size: 12px; color: var(--text-muted); }
+
+  /* ============================================
+     SPLIT LAYOUT
+     ============================================ */
+  .split-layout { display: flex; height: 100%; overflow: hidden; }
+
+  .split-left {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    background: var(--black);
+  }
+
+  .split-right {
+    width: 380px;
+    min-width: 380px;
+    background: var(--black-soft);
+    overflow-y: auto;
+    padding: 24px;
+  }
+
+  /* ============================================
+     CHAT
+     ============================================ */
+  .chat-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .chat-header-name { font-size: 14px; font-weight: 600; }
+  .chat-header-status { font-size: 12px; color: var(--text-muted); }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .msg-user { align-self: flex-end; max-width: 70%; }
+
+  .msg-user-bubble {
+    background: var(--white);
+    color: var(--black);
+    padding: 10px 16px;
+    border-radius: 14px 14px 2px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .msg-user-time {
+    text-align: right;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .msg-persona { align-self: flex-start; max-width: 85%; }
+
+  .msg-persona-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .msg-persona-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+    background: var(--surface-active);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+
+  .msg-persona-name { font-size: 13px; font-weight: 600; }
+  .msg-persona-demo { font-size: 11px; color: var(--text-muted); }
+
+  .msg-persona-body {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 14px 16px;
+  }
+
+  .msg-persona-text {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text-primary);
+  }
+
+  .msg-persona-meta {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  .msg-meta-item { font-size: 11px; color: var(--text-secondary); }
+
+  .msg-meta-label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-right: 4px;
+  }
+
+  .intent-bar {
+    display: inline-block;
+    height: 5px;
+    border-radius: 2px;
+    background: var(--surface-active);
+    width: 60px;
+    position: relative;
+    vertical-align: middle;
+  }
+
+  .intent-bar-fill {
+    position: absolute;
+    left: 0; top: 0;
+    height: 100%;
+    border-radius: 2px;
+    background: var(--white);
+  }
+
+  .chat-input-area {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+
+  .chat-input-wrapper { display: flex; gap: 8px; }
+
+  .chat-input {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    outline: none;
+    resize: none;
+    background: var(--black);
+    color: var(--text-primary);
+  }
+
+  .chat-input:focus { border-color: var(--text-muted); }
+  .chat-input::placeholder { color: var(--text-muted); }
+
+  .btn-send {
+    padding: 10px 20px;
+    background: var(--white);
+    color: var(--black);
+    border: none;
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn-send:hover { opacity: 0.85; }
+
+  /* ============================================
+     DETAIL PANEL
+     ============================================ */
+  .detail-section { margin-bottom: 24px; }
+
+  .detail-section-title {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .detail-name { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .detail-demo { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+
+  .detail-field { margin-bottom: 14px; }
+
+  .detail-field-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+
+  .detail-field-value { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+  .detail-divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  .source-item {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+
+  .source-item:hover { background: var(--surface-hover); border-color: var(--border-hover); }
+
+  .source-item-sub { font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 2px; }
+
+  .source-item-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .source-item-score { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ============================================
+     PANEL BUILDER
+     ============================================ */
+  .panel-builder-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .persona-bar {
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+    overflow-x: auto;
+    overflow-y: visible;
+    position: relative;
+    z-index: 50;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+    /* Extra bottom padding so tooltips have a clickable gap */
+    padding-bottom: 14px;
+  }
+
+  .persona-bar::-webkit-scrollbar { height: 4px; }
+  .persona-bar::-webkit-scrollbar-track { background: transparent; }
+  .persona-bar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .persona-bar::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+  .persona-bar-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  .persona-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    cursor: grab;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    background: var(--surface);
+    position: relative;
+  }
+
+  .persona-chip:hover { border-color: var(--text-muted); background: var(--surface-hover); }
+
+  .persona-chip.selected {
+    border-color: var(--text-muted);
+    background: var(--surface-active);
+  }
+
+  .persona-chip-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    background: var(--surface-active);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+
+  .persona-chip-name { font-size: 13px; font-weight: 500; }
+  .persona-chip-age { font-size: 11px; color: var(--text-muted); }
+
+  .persona-chip-tooltip {
+    display: none;
+    position: fixed;
+    width: 280px;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border-hover);
+    border-radius: 3px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    z-index: 9999;
+    white-space: normal;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .tooltip-title { font-weight: 600; margin-bottom: 6px; font-size: 13px; color: var(--text-primary); }
+  .tooltip-style { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+  .panel-builder-body {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .panel-selected {
+    width: 280px;
+    min-width: 280px;
+    border-right: 1px solid var(--border);
+    background: var(--black-soft);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .panel-selected-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .panel-selected-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .panel-selected-subtitle { font-size: 12px; color: var(--text-muted); }
+
+  .panel-selected-list { flex: 1; padding: 12px; overflow-y: auto; }
+
+  .panel-drop-zone {
+    border: 1px dashed var(--border);
+    border-radius: 2px;
+    padding: 20px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 8px;
+    transition: all 0.15s;
+  }
+
+  .panel-drop-zone:hover { border-color: var(--text-muted); }
+
+  .panel-member {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 6px;
+    background: var(--surface);
+  }
+
+  .panel-member-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; flex-shrink: 0;
+    background: var(--surface-active);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+
+  .panel-member-info { flex: 1; min-width: 0; }
+  .panel-member-name { font-size: 13px; font-weight: 600; }
+  .panel-member-demo { font-size: 11px; color: var(--text-muted); }
+
+  .panel-member-remove {
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text-muted); font-size: 14px;
+    border-radius: 2px; flex-shrink: 0;
+  }
+
+  .panel-member-remove:hover { color: var(--text-primary); background: var(--surface-active); }
+
+  .panel-chat {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+    background: var(--black);
+    overflow: hidden;
+  }
+
+  /* ============================================
+     CREATE PERSONA
+     ============================================ */
+  .create-persona-layout { max-width: 720px; margin: 0 auto; padding: 40px 0; }
+
+  .create-persona-header { margin-bottom: 32px; }
+
+  .create-persona-header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .create-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .create-step-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  .create-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    resize: vertical;
+    outline: none;
+    background: var(--black);
+  }
+
+  .create-textarea:focus { border-color: var(--text-muted); }
+  .create-textarea::placeholder { color: var(--text-muted); }
+
+  .create-hint { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.4; }
+
+  .btn-generate {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: var(--white);
+    color: var(--black);
+    border: none;
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: opacity 0.15s;
+  }
+
+  .btn-generate:hover { opacity: 0.85; }
+
+  .persona-preview {
+    background: var(--surface);
+    border: 1px solid var(--border-hover);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .persona-preview-header {
+    padding: 14px 24px;
+    background: var(--surface-active);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .persona-preview-badge {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+  }
+
+  .persona-preview-body { padding: 24px; }
+
+  .persona-name-input {
+    font-size: 20px;
+    font-weight: 700;
+    border: none;
+    border-bottom: 2px solid var(--border);
+    padding: 4px 0;
+    width: 200px;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    outline: none;
+    background: transparent;
+    letter-spacing: 0.5px;
+  }
+
+  .persona-name-input:focus { border-bottom-color: var(--text-muted); }
+  .persona-name-input::placeholder { color: var(--text-muted); }
+
+  .persona-preview-desc {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--black);
+    border-radius: 2px;
+    border: 1px solid var(--border);
+  }
+
+  .persona-preview-attrs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .persona-preview-attr {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+
+  .persona-preview-attr-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+
+  .persona-preview-attr-value { font-size: 13px; color: var(--text-secondary); }
+
+  .persona-preview-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-secondary {
+    padding: 10px 20px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-secondary:hover { border-color: var(--text-muted); color: var(--text-primary); }
+
+  .btn-save {
+    padding: 10px 24px;
+    background: var(--white);
+    color: var(--black);
+    border: none;
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .btn-save:hover { opacity: 0.85; }
+
+  /* ============================================
+     PROCESSING
+     ============================================ */
+  .processing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+  }
+
+  .processing-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  .processing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .processing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes pulse {
+    0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+
+  .processing-text { font-size: 13px; color: var(--text-muted); }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+</style>
+
+</head>
+<body>
+
+<div id="page-login" class="page page-login active">
+  <div class="login-container">
+    <div class="login-brand">Syn<span>Muse</span></div>
+    <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" placeholder="you@brand.com"></div>
+    <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" placeholder="••••••••"></div>
+    <button class="btn-primary" onclick="navigateTo('home')">Sign in</button>
+    <div class="login-divider">or</div>
+    <button class="btn-secondary-outline">Continue with Google</button>
+    <div class="login-footer">No account? <a href="#">Request access</a></div>
+  </div>
+</div>
+
+<div id="page-home" class="page">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-brand">Syn<span>Muse</span></div>
+      <div class="sidebar-nav">
+<div class="nav-section-label">Workspace</div>
+        <div class="nav-item active" onclick="navigateTo('home')"><span class="nav-icon">⊞</span> Home</div>
+        <div class="nav-item" onclick="navigateTo('create-persona')"><span class="nav-icon">+</span> New Persona</div>
+        <div class="nav-item" onclick="navigateTo('panel-linen')"><span class="nav-icon">⊕</span> New Panel</div>
+        <div class="nav-section-label">Recent</div>
+        <div class="nav-item" onclick="navigateTo('persona-sophie')"><span class="nav-icon">◯</span> Sophie — Trend-Forward</div>
+        <div class="nav-item" onclick="navigateTo('persona-jordan')"><span class="nav-icon">◯</span> Jordan — Archive Collector</div>
+        <div class="nav-item" onclick="navigateTo('panel-linen')"><span class="nav-icon">◻</span> SS26 Linen Panel</div>
+        <div class="nav-item" onclick="navigateTo('panel-denim')"><span class="nav-icon">◻</span> AW26 Denim Panel</div>
+      </div>
+      <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">TN</div><div><div class="sidebar-user-name">Tejas N.</div><div class="sidebar-user-email">tejas@brand.co</div></div></div></div>
+    </nav>
+    <div class="main">
+      <div class="home-header"><h1>Your workspace</h1></div>
+      <div class="home-grid">
+        <div class="home-column">
+          <div class="home-column-header"><div class="home-column-title">Personas</div><div class="home-column-count">9</div></div>
+          <div class="home-column-body">
+            <div class="persona-mini" onclick="navigateTo('persona-sophie')"><div class="persona-mini-name">Sophie</div><div class="persona-mini-demo">26 · London · £45K · Early adopter</div></div>
+            <div class="persona-mini"><div class="persona-mini-name">Priya</div><div class="persona-mini-demo">31 · Manchester · £38K · Research-driven</div></div>
+            <div class="persona-mini"><div class="persona-mini-name">Marcus</div><div class="persona-mini-demo">22 · Birmingham · Student · Depop regular</div></div>
+            <div class="persona-mini"><div class="persona-mini-name">Emma</div><div class="persona-mini-demo">34 · Edinburgh · £65K · Capsule wardrobe</div></div>
+            <div class="persona-mini"><div class="persona-mini-name">Aisha</div><div class="persona-mini-demo">19 · South London · Gap year · Impulse buyer</div></div>
+            <div class="persona-mini"><div class="persona-mini-name">Diane</div><div class="persona-mini-demo">52 · Surrey · £58K · Brand loyal</div></div>
+            <div class="persona-mini" onclick="navigateTo('persona-jordan')"><div class="persona-mini-name">Jordan</div><div class="persona-mini-demo">24 · East London · £30K · Archive collector</div></div>
+            <div class="persona-mini"><div class="persona-mini-name">Raj</div><div class="persona-mini-demo">29 · Leeds · £42K · Smart-casual office</div></div>
+            <div class="persona-mini"><div class="persona-mini-name">Tom</div><div class="persona-mini-demo">37 · Bristol · £55K · Workwear heritage</div></div>
+          </div>
+        </div>
+        <div class="home-column">
+          <div class="home-column-header"><div class="home-column-title">Panels</div><div class="home-column-count">3</div></div>
+          <div class="home-column-body">
+            <div class="action-card" onclick="navigateTo('panel-linen')"><div class="action-card-icon">⊕</div><div class="action-card-title">Create new panel</div><div class="action-card-desc">Assemble personas into a focus group and test product concepts</div></div>
+            <div class="panel-mini" onclick="navigateTo('panel-linen')"><div class="panel-mini-name">SS26 Linen Range Panel</div><div class="panel-mini-personas"><div class="panel-mini-avatar">S</div><div class="panel-mini-avatar">P</div><div class="panel-mini-avatar">E</div><div class="panel-mini-avatar">D</div></div><div class="panel-mini-meta">4 personas · Last active 2h ago</div></div>
+            <div class="panel-mini" onclick="navigateTo('panel-denim')"><div class="panel-mini-name">AW26 Menswear Denim Panel</div><div class="panel-mini-personas"><div class="panel-mini-avatar">J</div><div class="panel-mini-avatar">R</div><div class="panel-mini-avatar">T</div><div class="panel-mini-avatar">M</div></div><div class="panel-mini-meta">4 personas · Last active 4h ago</div></div>
+            <div class="panel-mini"><div class="panel-mini-name">Gen Z Streetwear Test</div><div class="panel-mini-personas"><div class="panel-mini-avatar">M</div><div class="panel-mini-avatar">A</div><div class="panel-mini-avatar">S</div></div><div class="panel-mini-meta">3 personas · Last active 1d ago</div></div>
+          </div>
+        </div>
+        <div class="home-column">
+          <div class="home-column-header"><div class="home-column-title">Create</div></div>
+          <div class="home-column-body">
+            <div class="action-card" onclick="navigateTo('create-persona')"><div class="action-card-icon">+</div><div class="action-card-title">New persona</div><div class="action-card-desc">Describe a consumer in natural language. We'll build their profile from real discourse data.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-persona-sophie" class="page">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-brand">Syn<span>Muse</span></div>
+      <div class="sidebar-nav">
+<div class="nav-section-label">Workspace</div>
+        <div class="nav-item" onclick="navigateTo('home')"><span class="nav-icon">⊞</span> Home</div>
+        <div class="nav-item" onclick="navigateTo('create-persona')"><span class="nav-icon">+</span> New Persona</div>
+        <div class="nav-item" onclick="navigateTo('panel-linen')"><span class="nav-icon">⊕</span> New Panel</div>
+        <div class="nav-section-label">Recent</div>
+        <div class="nav-item active" onclick="navigateTo('persona-sophie')"><span class="nav-icon">◯</span> Sophie — Trend-Forward</div>
+        <div class="nav-item" onclick="navigateTo('persona-jordan')"><span class="nav-icon">◯</span> Jordan — Archive Collector</div>
+        <div class="nav-item" onclick="navigateTo('panel-linen')"><span class="nav-icon">◻</span> SS26 Linen Panel</div>
+        <div class="nav-item" onclick="navigateTo('panel-denim')"><span class="nav-icon">◻</span> AW26 Denim Panel</div>
+      </div>
+      <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">TN</div><div><div class="sidebar-user-name">Tejas N.</div><div class="sidebar-user-email">tejas@brand.co</div></div></div></div>
+    </nav>
+    <div class="main-full">
+      <div class="split-layout">
+        <div class="split-left">
+          <div class="chat-header"><div class="msg-persona-avatar" style="width:32px;height:32px;font-size:13px;">S</div><div><div class="chat-header-name">Sophie</div><div class="chat-header-status">Trend-forward · 26 · London</div></div></div>
+          <div class="chat-messages">
+            <div class="msg-user"><div class="msg-user-bubble">What do you think of a relaxed-fit linen blazer in sage green, priced at £89? It's targeting women 25–32, positioned as a COS competitor.</div><div class="msg-user-time">2:34 PM</div></div>
+            <div class="msg-persona"><div class="msg-persona-header"><div class="msg-persona-avatar">S</div><div><span class="msg-persona-name">Sophie</span><span class="msg-persona-demo"> · 26, London</span></div></div><div class="msg-persona-body"><div class="msg-persona-text">Sage green linen blazer at £89 — honestly, my first reaction is "haven't I seen this everywhere already?" COS did their oversized linen blazer in a similar sage last spring and it went to sale within six weeks. The silhouette is safe, which is fine, but at that price you're competing directly with Arket and &amp; Other Stories who are doing the same thing with better fabric weight. If you're going to do linen at this price, the colour needs to be unexpected — a tobacco or a washed terracotta would feel more current right now. I'd probably scroll past this one.</div><div class="msg-persona-meta"><div class="msg-meta-item"><span class="msg-meta-label">Intent</span><span class="intent-bar"><span class="intent-bar-fill" style="width:40%"></span></span> 4/10</div><div class="msg-meta-item"><span class="msg-meta-label">Concern</span> Colour saturation</div></div></div></div>
+            <div class="msg-user"><div class="msg-user-bubble">What if we changed the colour to tobacco brown and added patch pockets?</div><div class="msg-user-time">2:36 PM</div></div>
+            <div class="msg-persona"><div class="msg-persona-header"><div class="msg-persona-avatar">S</div><div><span class="msg-persona-name">Sophie</span><span class="msg-persona-demo"> · 26, London</span></div></div><div class="msg-persona-body"><div class="msg-persona-text">Now that's more interesting. Tobacco is having a moment — I keep seeing it on the FFA threads and it's all over the Scandi brands this season. Patch pockets give it a slightly workwear edge that would photograph well. At £89 with a good drape I'd actually stop scrolling for this. My only question would be the lining situation — if it's unlined at that price it needs to feel intentionally relaxed, not cheap. Get the fabric right and this could be a wardrobe staple piece.</div><div class="msg-persona-meta"><div class="msg-meta-item"><span class="msg-meta-label">Intent</span><span class="intent-bar"><span class="intent-bar-fill" style="width:70%"></span></span> 7/10</div><div class="msg-meta-item"><span class="msg-meta-label">Concern</span> Fabric quality at price point</div></div></div></div>
+          </div>
+          <div class="chat-input-area"><div class="chat-input-wrapper"><input type="text" class="chat-input" placeholder="Ask Sophie about a product concept..."><button class="btn-send">Send</button></div></div>
+        </div>
+        <div class="split-right">
+          <div class="detail-section"><div class="detail-name">Sophie</div><div class="detail-demo">Trend-forward early adopter · 26 · London</div></div>
+          <div class="detail-section"><div class="detail-section-title">Profile</div><div class="detail-field"><div class="detail-field-label">Income</div><div class="detail-field-value">£45,000</div></div><div class="detail-field"><div class="detail-field-label">Shopping Behaviour</div><div class="detail-field-value">Early adopter. Follows TikTok trends. Shops Zara, COS, &amp; Other Stories. Returns ~30% of online purchases.</div></div><div class="detail-field"><div class="detail-field-label">Personality</div><div class="detail-field-value">Enthusiastic but critical. Excited by newness but has been burned by poor quality. Vocal about value for money.</div></div><div class="detail-field"><div class="detail-field-label">Style Identity</div><div class="detail-field-value">Minimalist-leaning with trend accents. Quiet luxury aspirant on a high-street budget.</div></div></div>
+          <div class="detail-divider"></div>
+          <div class="detail-section"><div class="detail-section-title">Data Sources</div><div class="detail-field"><div class="detail-field-label">Grounded in</div><div class="detail-field-value">2,847 discourse fragments from 3 sources</div></div><div style="margin-top:12px;"><div class="source-item"><div class="source-item-sub">r/femalefashionadvice</div><div class="source-item-text">"COS linen blazer was a total disappointment — the fabric was so thin you could see through it. At £79 I expected better."</div><div class="source-item-score">↑ 847 · 6 months ago</div></div><div class="source-item"><div class="source-item-sub">r/femalefashionadvice</div><div class="source-item-text">"Is anyone else over sage green? Every brand has done it to death. Give me tobacco, olive, or even a warm grey."</div><div class="source-item-score">↑ 623 · 3 months ago</div></div><div class="source-item"><div class="source-item-sub">r/femalefashionadvice</div><div class="source-item-text">"Just got the Arket relaxed blazer in tobacco and it's genuinely perfect. Great weight, patch pockets, works with everything."</div><div class="source-item-score">↑ 412 · 2 months ago</div></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-persona-jordan" class="page">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-brand">Syn<span>Muse</span></div>
+      <div class="sidebar-nav">
+<div class="nav-section-label">Workspace</div>
+        <div class="nav-item" onclick="navigateTo('home')"><span class="nav-icon">⊞</span> Home</div>
+        <div class="nav-item" onclick="navigateTo('create-persona')"><span class="nav-icon">+</span> New Persona</div>
+        <div class="nav-item" onclick="navigateTo('panel-linen')"><span class="nav-icon">⊕</span> New Panel</div>
+        <div class="nav-section-label">Recent</div>
+        <div class="nav-item" onclick="navigateTo('persona-sophie')"><span class="nav-icon">◯</span> Sophie — Trend-Forward</div>
+        <div class="nav-item active" onclick="navigateTo('persona-jordan')"><span class="nav-icon">◯</span> Jordan — Archive Collector</div>
+        <div class="nav-item" onclick="navigateTo('panel-linen')"><span class="nav-icon">◻</span> SS26 Linen Panel</div>
+        <div class="nav-item" onclick="navigateTo('panel-denim')"><span class="nav-icon">◻</span> AW26 Denim Panel</div>
+      </div>
+      <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">TN</div><div><div class="sidebar-user-name">Tejas N.</div><div class="sidebar-user-email">tejas@brand.co</div></div></div></div>
+    </nav>
+    <div class="main-full">
+      <div class="split-layout">
+        <div class="split-left">
+          <div class="chat-header"><div class="msg-persona-avatar" style="width:32px;height:32px;font-size:13px;">J</div><div><div class="chat-header-name">Jordan</div><div class="chat-header-status">Archive collector · 24 · East London</div></div></div>
+          <div class="chat-messages">
+            <div class="msg-user"><div class="msg-user-bubble">We're thinking about a heavyweight charcoal grey straight-leg jean, 14oz selvedge, £95 RRP. Competing with the Orslow 107 and Stan Ray 80s Painter. What do you think?</div><div class="msg-user-time">4:02 PM</div></div>
+            <div class="msg-persona"><div class="msg-persona-header"><div class="msg-persona-avatar">J</div><div><span class="msg-persona-name">Jordan</span><span class="msg-persona-demo"> · 24, East London</span></div></div><div class="msg-persona-body"><div class="msg-persona-text">14oz selvedge at £95 is genuinely interesting — that undercuts Orslow by a huge margin and you're offering comparable weight. Charcoal is a smart choice because good grey denim is surprisingly hard to find at this level. Most brands either do washed-out grey that looks like old Primark jeans or near-black that fades badly. If your charcoal has depth — like a dark grey with slight blue undertones that develops character over time — I'm paying attention. The straight-leg silhouette is correct, it's what everyone in my circle is wearing. My question: is this rope-dyed or synthetic? Because at £95 the dyeing process is what separates this from a Uniqlo U jean with a higher price tag.</div><div class="msg-persona-meta"><div class="msg-meta-item"><span class="msg-meta-label">Intent</span><span class="intent-bar"><span class="intent-bar-fill" style="width:70%"></span></span> 7/10</div><div class="msg-meta-item"><span class="msg-meta-label">Concern</span> Dye quality and fading potential</div></div></div></div>
+            <div class="msg-user"><div class="msg-user-bubble">It's rope-dyed with a 3x1 right-hand twill. We're using a Japanese mill for the fabric. What about sizing — should we do vanity sizing or true-to-waist?</div><div class="msg-user-time">4:05 PM</div></div>
+            <div class="msg-persona"><div class="msg-persona-header"><div class="msg-persona-avatar">J</div><div><span class="msg-persona-name">Jordan</span><span class="msg-persona-demo"> · 24, East London</span></div></div><div class="msg-persona-body"><div class="msg-persona-text">Japanese mill and rope-dyed at £95 — that's a genuine value proposition. You've got my attention. On sizing: true-to-waist, absolutely. Anyone buying 14oz selvedge knows their measurements and expects raw denim sizing conventions. Vanity sizing would actively undermine your credibility with this audience. Include a one-wash option too if you can — some people don't want to do the shrink-to-fit thing, especially on a first purchase from an unknown brand. The 3x1 twill is solid, that's what Orslow uses on the 107 and it gives a nice diagonal texture as it breaks in. If the fade potential is there and you're honest about the fabric source, this could get traction on r/rawdenim fast.</div><div class="msg-persona-meta"><div class="msg-meta-item"><span class="msg-meta-label">Intent</span><span class="intent-bar"><span class="intent-bar-fill" style="width:80%"></span></span> 8/10</div><div class="msg-meta-item"><span class="msg-meta-label">Concern</span> Brand trust for first purchase</div></div></div></div>
+          </div>
+          <div class="chat-input-area"><div class="chat-input-wrapper"><input type="text" class="chat-input" placeholder="Ask Jordan about a product concept..."><button class="btn-send">Send</button></div></div>
+        </div>
+        <div class="split-right">
+          <div class="detail-section"><div class="detail-name">Jordan</div><div class="detail-demo">Archive collector · 24 · East London</div></div>
+          <div class="detail-section"><div class="detail-section-title">Profile</div><div class="detail-field"><div class="detail-field-label">Income</div><div class="detail-field-value">£30,000</div></div><div class="detail-field"><div class="detail-field-label">Shopping Behaviour</div><div class="detail-field-value">Buys secondhand first. Grailed, Depop, vintage stores in Brick Lane. Will save for months for a grail piece. Knows fabric weights by feel.</div></div><div class="detail-field"><div class="detail-field-label">Personality</div><div class="detail-field-value">Deeply knowledgeable, opinionated. Respects craft and provenance. Dismissive of brands that cut corners. Active on Reddit denim communities.</div></div><div class="detail-field"><div class="detail-field-label">Style Identity</div><div class="detail-field-value">Japanese workwear meets London vintage. Heavy fabrics, muted palettes, patina-friendly pieces. Anti-trend but not anti-fashion.</div></div></div>
+          <div class="detail-divider"></div>
+          <div class="detail-section"><div class="detail-section-title">Data Sources</div><div class="detail-field"><div class="detail-field-label">Grounded in</div><div class="detail-field-value">3,412 discourse fragments from 4 sources</div></div><div style="margin-top:12px;"><div class="source-item"><div class="source-item-sub">r/rawdenim</div><div class="source-item-text">"14oz is the sweet spot for year-round wear. Anything lighter feels like chinos, anything heavier is a commitment."</div><div class="source-item-score">↑ 1,203 · 4 months ago</div></div><div class="source-item"><div class="source-item-sub">r/malefashionadvice</div><div class="source-item-text">"Grey selvedge is criminally underrated. Way more versatile than indigo for daily wear, pairs with everything."</div><div class="source-item-score">↑ 891 · 2 months ago</div></div><div class="source-item"><div class="source-item-sub">r/rawdenim</div><div class="source-item-text">"Just because a brand uses Japanese fabric doesn't mean the construction is good. Check the stitching, the rivets, the chain stitch hem."</div><div class="source-item-score">↑ 567 · 5 months ago</div></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-panel-linen" class="page">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-brand">Syn<span>Muse</span></div>
+      <div class="sidebar-nav">
+<div class="nav-section-label">Workspace</div>
+        <div class="nav-item" onclick="navigateTo('home')"><span class="nav-icon">⊞</span> Home</div>
+        <div class="nav-item" onclick="navigateTo('create-persona')"><span class="nav-icon">+</span> New Persona</div>
+        <div class="nav-item" onclick="navigateTo('panel-linen')"><span class="nav-icon">⊕</span> New Panel</div>
+        <div class="nav-section-label">Recent</div>
+        <div class="nav-item" onclick="navigateTo('persona-sophie')"><span class="nav-icon">◯</span> Sophie — Trend-Forward</div>
+        <div class="nav-item" onclick="navigateTo('persona-jordan')"><span class="nav-icon">◯</span> Jordan — Archive Collector</div>
+        <div class="nav-item active" onclick="navigateTo('panel-linen')"><span class="nav-icon">◻</span> SS26 Linen Panel</div>
+        <div class="nav-item" onclick="navigateTo('panel-denim')"><span class="nav-icon">◻</span> AW26 Denim Panel</div>
+      </div>
+      <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">TN</div><div><div class="sidebar-user-name">Tejas N.</div><div class="sidebar-user-email">tejas@brand.co</div></div></div></div>
+    </nav>
+    <div class="main-full">
+      <div class="panel-builder-layout">
+        <div class="persona-bar">
+          <span class="persona-bar-label">Personas</span>
+          <div class="persona-chip selected"><div class="persona-chip-avatar">S</div><span class="persona-chip-name">Sophie</span><span class="persona-chip-age">26</span><div class="persona-chip-tooltip"><div class="tooltip-title">Sophie — Trend-Forward</div><div class="tooltip-style">Minimalist with trend accents. Shops COS, Zara, &amp; Other Stories. Vocal about value for money.</div></div></div>
+          <div class="persona-chip selected"><div class="persona-chip-avatar">P</div><span class="persona-chip-name">Priya</span><span class="persona-chip-age">31</span><div class="persona-chip-tooltip"><div class="tooltip-title">Priya — Value Seeker</div><div class="tooltip-style">Classic with comfort priority. Researches extensively. Shops M&amp;S, John Lewis, Uniqlo sales.</div></div></div>
+          <div class="persona-chip"><div class="persona-chip-avatar">M</div><span class="persona-chip-name">Marcus</span><span class="persona-chip-age">22</span><div class="persona-chip-tooltip"><div class="tooltip-title">Marcus — Streetwear</div><div class="tooltip-style">Opinionated, culturally tuned-in. Shops Depop and drops. Anti-fast-fashion but budget-pragmatic.</div></div></div>
+          <div class="persona-chip selected"><div class="persona-chip-avatar">E</div><span class="persona-chip-name">Emma</span><span class="persona-chip-age">34</span><div class="persona-chip-tooltip"><div class="tooltip-title">Emma — Luxury Adjacent</div><div class="tooltip-style">Discerning, quality-focused. Shops Arket, COS, Totême. Builds capsule wardrobe.</div></div></div>
+          <div class="persona-chip"><div class="persona-chip-avatar">A</div><span class="persona-chip-name">Aisha</span><span class="persona-chip-age">19</span><div class="persona-chip-tooltip"><div class="tooltip-title">Aisha — Gen Z</div><div class="tooltip-style">Expressive, trend-reactive. Mix of Shein, vintage, and occasional splurge.</div></div></div>
+          <div class="persona-chip selected"><div class="persona-chip-avatar">D</div><span class="persona-chip-name">Diane</span><span class="persona-chip-age">52</span><div class="persona-chip-tooltip"><div class="tooltip-title">Diane — Elevated Classic</div><div class="tooltip-style">Confident, no-nonsense. Shops Hobbs, Jigsaw, ME+EM. Wants to look current, not dated.</div></div></div>
+          <div class="persona-chip"><div class="persona-chip-avatar">J</div><span class="persona-chip-name">Jordan</span><span class="persona-chip-age">24</span><div class="persona-chip-tooltip"><div class="tooltip-title">Jordan — Archive Collector</div><div class="tooltip-style">Deep into archive fashion and vintage denim. Shops Depop, Grailed. Knows every Levi's cut number.</div></div></div>
+          <div class="persona-chip"><div class="persona-chip-avatar">R</div><span class="persona-chip-name">Raj</span><span class="persona-chip-age">29</span><div class="persona-chip-tooltip"><div class="tooltip-title">Raj — Smart-Casual</div><div class="tooltip-style">Works in tech. Shops Uniqlo, COS, Arket. Wants versatile pieces that work from desk to dinner.</div></div></div>
+          <div class="persona-chip"><div class="persona-chip-avatar">T</div><span class="persona-chip-name">Tom</span><span class="persona-chip-age">37</span><div class="persona-chip-tooltip"><div class="tooltip-title">Tom — Workwear Heritage</div><div class="tooltip-style">Obsessed with construction and fabric. Shops Carhartt WIP, Norse Projects. Wants 14oz+ denim, selvedge preferred.</div></div></div>
+        </div>
+        <div class="panel-builder-body">
+          <div class="panel-selected">
+            <div class="panel-selected-header"><div class="panel-selected-title">Panel Members</div><div class="panel-selected-subtitle">4 selected</div></div>
+            <div class="panel-selected-list">
+              <div class="panel-member"><div class="panel-member-avatar">S</div><div class="panel-member-info"><div class="panel-member-name">Sophie</div><div class="panel-member-demo">26 · Trend-forward</div></div><div class="panel-member-remove">×</div></div>
+              <div class="panel-member"><div class="panel-member-avatar">P</div><div class="panel-member-info"><div class="panel-member-name">Priya</div><div class="panel-member-demo">31 · Value seeker</div></div><div class="panel-member-remove">×</div></div>
+              <div class="panel-member"><div class="panel-member-avatar">E</div><div class="panel-member-info"><div class="panel-member-name">Emma</div><div class="panel-member-demo">34 · Luxury adjacent</div></div><div class="panel-member-remove">×</div></div>
+              <div class="panel-member"><div class="panel-member-avatar">D</div><div class="panel-member-info"><div class="panel-member-name">Diane</div><div class="panel-member-demo">52 · Elevated classic</div></div><div class="panel-member-remove">×</div></div>
+              <div class="panel-drop-zone">+ Click a persona above to add</div>
+            </div>
+          </div>
+          <div class="panel-chat">
+            <div class="chat-header"><div><div class="chat-header-name">SS26 Linen Range Panel</div><div class="chat-header-status">Sophie, Priya, Emma, Diane</div></div></div>
+            <div class="chat-messages">
+              <div class="msg-user"><div class="msg-user-bubble">What do you think about a relaxed-fit linen blazer in sage green, priced at £89, targeting women 25–32 as a COS/Arket competitor?</div><div class="msg-user-time">2:34 PM</div></div>
+              <div class="msg-persona"><div class="msg-persona-header"><div class="msg-persona-avatar">S</div><div><span class="msg-persona-name">Sophie</span><span class="msg-persona-demo"> · 26, London · Trend-forward</span></div></div><div class="msg-persona-body"><div class="msg-persona-text">Sage green linen at £89 — I've literally seen this exact product on every mid-range brand's lookbook this season. COS did it, Arket did it, &amp; Other Stories did it. Unless the cut or detailing is genuinely different, this disappears on the rail. The silhouette is fine but "relaxed linen blazer" isn't a concept anymore, it's a commodity. I'd need to see something unexpected to stop scrolling.</div><div class="msg-persona-meta"><div class="msg-meta-item"><span class="msg-meta-label">Intent</span><span class="intent-bar"><span class="intent-bar-fill" style="width:40%"></span></span> 4/10</div><div class="msg-meta-item"><span class="msg-meta-label">Concern</span> Market saturation</div></div></div></div>
+              <div class="msg-persona"><div class="msg-persona-header"><div class="msg-persona-avatar">P</div><div><span class="msg-persona-name">Priya</span><span class="msg-persona-demo"> · 31, Manchester · Value seeker</span></div></div><div class="msg-persona-body"><div class="msg-persona-text">I actually like the concept — a linen blazer is exactly what I need for the office when it gets warmer. But £89 for linen makes me cautious. I've bought linen at that price before and the quality was terrible — too sheer, wrinkled horribly, lost its shape after two washes. If this is a linen-cotton blend with decent construction, I'm interested. If it's pure linen at that price I'd assume it's thin. I'd need to see fabric composition and reviews before purchasing.</div><div class="msg-persona-meta"><div class="msg-meta-item"><span class="msg-meta-label">Intent</span><span class="intent-bar"><span class="intent-bar-fill" style="width:60%"></span></span> 6/10</div><div class="msg-meta-item"><span class="msg-meta-label">Concern</span> Fabric quality at price point</div></div></div></div>
+              <div class="msg-persona"><div class="msg-persona-header"><div class="msg-persona-avatar">E</div><div><span class="msg-persona-name">Emma</span><span class="msg-persona-demo"> · 34, Edinburgh · Luxury adjacent</span></div></div><div class="msg-persona-body"><div class="msg-persona-text">At £89, this sits in an awkward middle ground for me. It's too expensive to be an impulse buy from Zara, but not expensive enough to compete with the Arket or Totême pieces I'd actually keep for five years. The colour is played out in this segment. If you're positioning against COS, you need either significantly better fabric or a genuine design detail they don't offer. A half-lined construction with a contrast interior would make me look twice.</div><div class="msg-persona-meta"><div class="msg-meta-item"><span class="msg-meta-label">Intent</span><span class="intent-bar"><span class="intent-bar-fill" style="width:30%"></span></span> 3/10</div><div class="msg-meta-item"><span class="msg-meta-label">Concern</span> Undifferentiated positioning</div></div></div></div>
+              <div class="msg-persona"><div class="msg-persona-header"><div class="msg-persona-avatar">D</div><div><span class="msg-persona-name">Diane</span><span class="msg-persona-demo"> · 52, Surrey · Elevated classic</span></div></div><div class="msg-persona-body"><div class="msg-persona-text">Relaxed fit in sage green could work beautifully if the proportions are right. My concern with "relaxed" at this price point is that it means shapeless — I want ease of movement, not a box. The colour is fine for my wardrobe, it goes with navy trousers and cream. At £89 from a brand I don't know, I'd need to try it in person. But the targeting at "25–32" would put me off immediately. I'm 52, I'd buy this blazer, and your marketing will make me feel excluded.</div><div class="msg-persona-meta"><div class="msg-meta-item"><span class="msg-meta-label">Intent</span><span class="intent-bar"><span class="intent-bar-fill" style="width:50%"></span></span> 5/10</div><div class="msg-meta-item"><span class="msg-meta-label">Concern</span> Narrow age targeting</div></div></div></div>
+            </div>
+            <div class="chat-input-area"><div class="chat-input-wrapper"><input type="text" class="chat-input" placeholder="Ask the panel a question..."><button class="btn-send">Send</button></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-panel-denim" class="page">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-brand">Syn<span>Muse</span></div>
+      <div class="sidebar-nav">
+<div class="nav-section-label">Workspace</div>
+        <div class="nav-item" onclick="navigateTo('home')"><span class="nav-icon">⊞</span> Home</div>
+        <div class="nav-item" onclick="navigateTo('create-persona')"><span class="nav-icon">+</span> New Persona</div>
+        <div class="nav-item" onclick="navigateTo('panel-linen')"><span class="nav-icon">⊕</span> New Panel</div>
+        <div class="nav-section-label">Recent</div>
+        <div class="nav-item" onclick="navigateTo('persona-sophie')"><span class="nav-icon">◯</span> Sophie — Trend-Forward</div>
+        <div class="nav-item" onclick="navigateTo('persona-jordan')"><span class="nav-icon">◯</span> Jordan — Archive Collector</div>
+        <div class="nav-item" onclick="navigateTo('panel-linen')"><span class="nav-icon">◻</span> SS26 Linen Panel</div>
+        <div class="nav-item active" onclick="navigateTo('panel-denim')"><span class="nav-icon">◻</span> AW26 Denim Panel</div>
+      </div>
+      <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">TN</div><div><div class="sidebar-user-name">Tejas N.</div><div class="sidebar-user-email">tejas@brand.co</div></div></div></div>
+    </nav>
+    <div class="main-full">
+      <div class="panel-builder-layout">
+        <div class="persona-bar">
+          <span class="persona-bar-label">Personas</span>
+          <div class="persona-chip"><div class="persona-chip-avatar">S</div><span class="persona-chip-name">Sophie</span><span class="persona-chip-age">26</span><div class="persona-chip-tooltip"><div class="tooltip-title">Sophie — Trend-Forward</div><div class="tooltip-style">Minimalist with trend accents. Shops COS, Zara, &amp; Other Stories. Vocal about value for money.</div></div></div>
+          <div class="persona-chip"><div class="persona-chip-avatar">P</div><span class="persona-chip-name">Priya</span><span class="persona-chip-age">31</span><div class="persona-chip-tooltip"><div class="tooltip-title">Priya — Value Seeker</div><div class="tooltip-style">Classic with comfort priority. Researches extensively. Shops M&amp;S, John Lewis, Uniqlo sales.</div></div></div>
+          <div class="persona-chip"><div class="persona-chip-avatar">M</div><span class="persona-chip-name">Marcus</span><span class="persona-chip-age">22</span><div class="persona-chip-tooltip"><div class="tooltip-title">Marcus — Streetwear</div><div class="tooltip-style">Opinionated, culturally tuned-in. Shops Depop and drops. Anti-fast-fashion but budget-pragmatic.</div></div></div>
+          <div class="persona-chip"><div class="persona-chip-avatar">E</div><span class="persona-chip-name">Emma</span><span class="persona-chip-age">34</span><div class="persona-chip-tooltip"><div class="tooltip-title">Emma — Luxury Adjacent</div><div class="tooltip-style">Discerning, quality-focused. Shops Arket, COS, Totême. Builds capsule wardrobe.</div></div></div>
+          <div class="persona-chip"><div class="persona-chip-avatar">A</div><span class="persona-chip-name">Aisha</span><span class="persona-chip-age">19</span><div class="persona-chip-tooltip"><div class="tooltip-title">Aisha — Gen Z</div><div class="tooltip-style">Expressive, trend-reactive. Mix of Shein, vintage, and occasional splurge.</div></div></div>
+          <div class="persona-chip"><div class="persona-chip-avatar">D</div><span class="persona-chip-name">Diane</span><span class="persona-chip-age">52</span><div class="persona-chip-tooltip"><div class="tooltip-title">Diane — Elevated Classic</div><div class="tooltip-style">Confident, no-nonsense. Shops Hobbs, Jigsaw, ME+EM. Wants to look current, not dated.</div></div></div>
+          <div class="persona-chip selected"><div class="persona-chip-avatar">J</div><span class="persona-chip-name">Jordan</span><span class="persona-chip-age">24</span><div class="persona-chip-tooltip"><div class="tooltip-title">Jordan — Archive Collector</div><div class="tooltip-style">Deep into archive fashion and vintage denim. Shops Depop, Grailed. Knows every Levi's cut number.</div></div></div>
+          <div class="persona-chip selected"><div class="persona-chip-avatar">R</div><span class="persona-chip-name">Raj</span><span class="persona-chip-age">29</span><div class="persona-chip-tooltip"><div class="tooltip-title">Raj — Smart-Casual</div><div class="tooltip-style">Works in tech. Shops Uniqlo, COS, Arket. Wants versatile pieces that work from desk to dinner.</div></div></div>
+          <div class="persona-chip selected"><div class="persona-chip-avatar">T</div><span class="persona-chip-name">Tom</span><span class="persona-chip-age">37</span><div class="persona-chip-tooltip"><div class="tooltip-title">Tom — Workwear Heritage</div><div class="tooltip-style">Obsessed with construction and fabric. Shops Carhartt WIP, Norse Projects. Wants 14oz+ denim, selvedge preferred.</div></div></div>
+        </div>
+        <div class="panel-builder-body">
+          <div class="panel-selected">
+            <div class="panel-selected-header"><div class="panel-selected-title">Panel Members</div><div class="panel-selected-subtitle">4 selected</div></div>
+            <div class="panel-selected-list">
+              <div class="panel-member"><div class="panel-member-avatar">J</div><div class="panel-member-info"><div class="panel-member-name">Jordan</div><div class="panel-member-demo">24 · Archive collector</div></div><div class="panel-member-remove">×</div></div>
+              <div class="panel-member"><div class="panel-member-avatar">R</div><div class="panel-member-info"><div class="panel-member-name">Raj</div><div class="panel-member-demo">29 · Smart-casual</div></div><div class="panel-member-remove">×</div></div>
+              <div class="panel-member"><div class="panel-member-avatar">T</div><div class="panel-member-info"><div class="panel-member-name">Tom</div><div class="panel-member-demo">37 · Workwear heritage</div></div><div class="panel-member-remove">×</div></div>
+              <div class="panel-member"><div class="panel-member-avatar">M</div><div class="panel-member-info"><div class="panel-member-name">Marcus</div><div class="panel-member-demo">22 · Streetwear</div></div><div class="panel-member-remove">×</div></div>
+              <div class="panel-drop-zone">+ Click a persona above to add</div>
+            </div>
+          </div>
+          <div class="panel-chat">
+            <div class="chat-header"><div><div class="chat-header-name">AW26 Menswear Denim Panel</div><div class="chat-header-status">Jordan, Raj, Tom, Marcus</div></div></div>
+            <div class="chat-messages">
+              <div class="msg-user"><div class="msg-user-bubble">We're considering adding a charcoal grey straight-leg baggy denim to our menswear line. 100% cotton, 12oz, £75 RRP. Positioned between Uniqlo and Carhartt WIP. Thoughts?</div><div class="msg-user-time">3:12 PM</div></div>
+              <div class="msg-persona"><div class="msg-persona-header"><div class="msg-persona-avatar">J</div><div><span class="msg-persona-name">Jordan</span><span class="msg-persona-demo"> · 24, East London · Archive collector</span></div></div><div class="msg-persona-body"><div class="msg-persona-text">Charcoal straight-leg baggy is a smart read of where denim is going — the wide/straight silhouette has been building for two years now and it's not slowing down. But at £75 for 12oz, you're in a difficult spot. That weight feels light for anyone who knows denim — Carhartt WIP's single knee is 12oz and it's already considered their lighter option. If I'm spending £75 on grey denim, I want at least 13.5oz. The colour is right though — charcoal is the perfect bridge between black and indigo, and it's massively under-served in the mid-market right now.</div><div class="msg-persona-meta"><div class="msg-meta-item"><span class="msg-meta-label">Intent</span><span class="intent-bar"><span class="intent-bar-fill" style="width:60%"></span></span> 6/10</div><div class="msg-meta-item"><span class="msg-meta-label">Concern</span> Fabric weight too light</div></div></div></div>
+              <div class="msg-persona"><div class="msg-persona-header"><div class="msg-persona-avatar">R</div><div><span class="msg-persona-name">Raj</span><span class="msg-persona-demo"> · 29, Leeds · Smart-casual</span></div></div><div class="msg-persona-body"><div class="msg-persona-text">This is exactly what I've been looking for. Charcoal denim reads more grown-up than indigo — I could wear these to the office without looking like I'm trying too hard. Straight-leg baggy is the right call, slim is completely dead for my age group. £75 is fair if the construction is solid — I'd compare this to the Uniqlo U wide straight at £40 and decide if the extra £35 gets me noticeably better fabric and finishing. The make-or-break for me is the rise — if it's a low rise I'm out immediately. Mid to high rise only.</div><div class="msg-persona-meta"><div class="msg-meta-item"><span class="msg-meta-label">Intent</span><span class="intent-bar"><span class="intent-bar-fill" style="width:80%"></span></span> 8/10</div><div class="msg-meta-item"><span class="msg-meta-label">Concern</span> Rise height critical</div></div></div></div>
+              <div class="msg-persona"><div class="msg-persona-header"><div class="msg-persona-avatar">T</div><div><span class="msg-persona-name">Tom</span><span class="msg-persona-demo"> · 37, Bristol · Workwear heritage</span></div></div><div class="msg-persona-body"><div class="msg-persona-text">12oz at £75 doesn't work for me. I can get Orslow 105s in a similar weight for not much more, and they'll last a decade. If you're going 100% cotton — which I respect, no stretch blends please — you need to justify the price with fabric character. Is this rope-dyed? Selvedge? Any texture to the weave? A flat, smooth 12oz charcoal at that price is just a grey pair of trousers. Give me slub, give me a slight texture, give me something that develops character with wear. That's what makes denim worth buying over chinos.</div><div class="msg-persona-meta"><div class="msg-meta-item"><span class="msg-meta-label">Intent</span><span class="intent-bar"><span class="intent-bar-fill" style="width:30%"></span></span> 3/10</div><div class="msg-meta-item"><span class="msg-meta-label">Concern</span> No fabric distinction</div></div></div></div>
+              <div class="msg-persona"><div class="msg-persona-header"><div class="msg-persona-avatar">M</div><div><span class="msg-persona-name">Marcus</span><span class="msg-persona-demo"> · 22, Birmingham · Streetwear</span></div></div><div class="msg-persona-body"><div class="msg-persona-text">Baggy charcoal denim is a yes from me in principle — I've been wearing this silhouette for two years and it's finally mainstream enough that brands are catching on. But "positioned between Uniqlo and Carhartt WIP" makes me nervous. That's no-man's-land. Uniqlo is cheap enough to impulse buy, Carhartt WIP has the brand credibility. At £75 from an unknown brand, I'd need to see it on someone I follow or styled in a lookbook that doesn't look like a catalogue. The product itself could be fine — the marketing will make or break this.</div><div class="msg-persona-meta"><div class="msg-meta-item"><span class="msg-meta-label">Intent</span><span class="intent-bar"><span class="intent-bar-fill" style="width:50%"></span></span> 5/10</div><div class="msg-meta-item"><span class="msg-meta-label">Concern</span> Brand positioning unclear</div></div></div></div>
+            </div>
+            <div class="chat-input-area"><div class="chat-input-wrapper"><input type="text" class="chat-input" placeholder="Ask the panel a question..."><button class="btn-send">Send</button></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-create-persona" class="page">
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-brand">Syn<span>Muse</span></div>
+      <div class="sidebar-nav">
+<div class="nav-section-label">Workspace</div>
+        <div class="nav-item" onclick="navigateTo('home')"><span class="nav-icon">⊞</span> Home</div>
+        <div class="nav-item active" onclick="navigateTo('create-persona')"><span class="nav-icon">+</span> New Persona</div>
+        <div class="nav-item" onclick="navigateTo('panel-linen')"><span class="nav-icon">⊕</span> New Panel</div>
+        <div class="nav-section-label">Recent</div>
+        <div class="nav-item" onclick="navigateTo('persona-sophie')"><span class="nav-icon">◯</span> Sophie — Trend-Forward</div>
+        <div class="nav-item" onclick="navigateTo('persona-jordan')"><span class="nav-icon">◯</span> Jordan — Archive Collector</div>
+        <div class="nav-item" onclick="navigateTo('panel-linen')"><span class="nav-icon">◻</span> SS26 Linen Panel</div>
+        <div class="nav-item" onclick="navigateTo('panel-denim')"><span class="nav-icon">◻</span> AW26 Denim Panel</div>
+      </div>
+      <div class="sidebar-footer"><div class="sidebar-user"><div class="sidebar-avatar">TN</div><div><div class="sidebar-user-name">Tejas N.</div><div class="sidebar-user-email">tejas@brand.co</div></div></div></div>
+    </nav>
+    <div class="main">
+      <div class="create-persona-layout">
+        <div class="create-persona-header"><h1>Create a persona</h1></div>
+        <div class="create-step">
+          <div class="create-step-label">Step 1 — Describe</div>
+          <textarea class="create-textarea" placeholder="e.g., A 28-year-old creative professional in East London who shops at Weekday, COS and vintage stores...">A 28-year-old creative professional in East London who shops at Weekday, COS and vintage stores. She's into the 'quiet luxury' aesthetic but can't actually afford luxury brands. Spends a lot on shoes but less on basics. Gets most fashion inspiration from TikTok and Pinterest. Sustainability matters to her but she's realistic about budget constraints.</textarea>
+          <div class="create-hint">Be as specific as you want — brands, income level, shopping habits, style references, personality traits.</div>
+          <button class="btn-generate" onclick="showPersonaPreview()">Generate persona →</button>
+        </div>
+        <div id="persona-preview-section" style="display:none;">
+          <div style="margin-bottom:12px;"><span class="create-step-label">Step 2 — Review &amp; Save</span></div>
+          <div class="persona-preview">
+            <div class="persona-preview-header"><div class="persona-preview-badge">Generated Persona</div><div style="font-size:11px;color:var(--text-muted);">Grounded in 1,923 discourse fragments</div></div>
+            <div class="persona-preview-body">
+              <input type="text" class="persona-name-input" placeholder="Name this persona..." value="">
+              <div class="persona-preview-desc">A budget-conscious creative professional navigating the tension between quiet luxury aspirations and high-street reality. She's deeply online — her taste is shaped by TikTok micro-trends and Pinterest mood boards — but she's developed a sharp eye for quality within her price range. Shops strategically: invests in footwear as statement pieces while keeping basics functional and affordable. Sustainability is a genuine value but not a dealbreaker when something good is on sale. She's the person who can spot the difference between COS and Totême at twenty paces but will always buy the COS version.</div>
+              <div class="persona-preview-attrs">
+                <div class="persona-preview-attr"><div class="persona-preview-attr-label">Age &amp; Location</div><div class="persona-preview-attr-value">28 · East London</div></div>
+                <div class="persona-preview-attr"><div class="persona-preview-attr-label">Est. Income</div><div class="persona-preview-attr-value">£32–38K</div></div>
+                <div class="persona-preview-attr"><div class="persona-preview-attr-label">Key Brands</div><div class="persona-preview-attr-value">COS, Weekday, Arket, vintage, Depop</div></div>
+                <div class="persona-preview-attr"><div class="persona-preview-attr-label">Style Identity</div><div class="persona-preview-attr-value">Quiet luxury on a budget · Scandi-minimalist with vintage accents</div></div>
+                <div class="persona-preview-attr"><div class="persona-preview-attr-label">Shopping Triggers</div><div class="persona-preview-attr-value">TikTok virality, end-of-season sales, unique footwear, vintage finds</div></div>
+                <div class="persona-preview-attr"><div class="persona-preview-attr-label">Pain Points</div><div class="persona-preview-attr-value">Quality inconsistency at mid-range, sustainability guilt, fast fashion temptation</div></div>
+              </div>
+              <div class="persona-preview-actions">
+                <button class="btn-secondary">← Regenerate</button>
+                <button class="btn-secondary">Edit details</button>
+                <button class="btn-save">Save persona</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function navigateTo(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + pageId)?.classList.add('active');
+    // Re-bind tooltips after page switch
+    bindTooltips();
+  }
+  function showPersonaPreview() {
+    const s = document.getElementById('persona-preview-section');
+    s.style.display = 'block';
+    s.scrollIntoView({ behavior: 'smooth' });
+  }
+  function bindTooltips() {
+    document.querySelectorAll('.persona-chip').forEach(chip => {
+      const tooltip = chip.querySelector('.persona-chip-tooltip');
+      if (!tooltip) return;
+      chip.onmouseenter = () => {
+        const r = chip.getBoundingClientRect();
+        tooltip.style.display = 'block';
+        tooltip.style.top = (r.bottom + 10) + 'px';
+        let left = r.left + r.width / 2 - 140;
+        tooltip.style.left = Math.max(8, Math.min(left, window.innerWidth - 288)) + 'px';
+      };
+      chip.onmouseleave = () => { tooltip.style.display = 'none'; };
+    });
+  }
+  document.addEventListener('DOMContentLoaded', bindTooltips);
+</script>
+</body>
+</html>
