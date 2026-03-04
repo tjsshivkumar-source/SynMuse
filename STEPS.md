@@ -153,7 +153,7 @@ P1 builds the processing and embedding pipeline. P2 builds remaining frontend pa
 
 ---
 
-### Step 06 · P2 · `[TODO]` · PanelChat page + PersonaChip component
+### Step 06 · P2 · `[IN REVIEW]` · PanelChat page + PersonaChip component
 **Branch:** `p2/step-06-panel-chat`
 **Depends on:** Step 04 merged
 **What to build:**
