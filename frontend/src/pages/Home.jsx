@@ -38,7 +38,7 @@ export default function Home() {
   const navigate = useNavigate()
 
   return (
-    <div>
+    <div className="h-full overflow-y-auto p-8 px-10">
       <div className="mb-8">
         <h1 className="text-[22px] font-semibold tracking-[0.5px]">Your workspace</h1>
       </div>
