@@ -93,7 +93,7 @@ Both partners work in parallel from the start. P1 builds the data pipeline. P2 b
 
 ---
 
-### Step 04 · P2 · `[TODO]` · PersonaChat page + ChatMessage component
+### Step 04 · P2 · `[IN REVIEW]` · PersonaChat page + ChatMessage component
 **Branch:** `p2/step-04-persona-chat`
 **Depends on:** Step 02 merged
 **What to build:**
