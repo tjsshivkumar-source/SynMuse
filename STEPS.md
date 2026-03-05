@@ -354,7 +354,7 @@ Both partners converge. P1 builds all demo personas and caches responses. P2 doe
 
 ---
 
-### Step 13 · P2 · `[TODO]` · Visual polish + error states + loading states
+### Step 13 · P2 · `[IN REVIEW]` · Visual polish + error states + loading states
 **Branch:** `p2/step-13-polish`
 **Depends on:** Step 10 merged
 **What to build:**

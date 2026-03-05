@@ -186,7 +186,7 @@ export default function PanelChat() {
     } catch {
       setMessages((prev) => [
         ...prev,
-        { id: Date.now(), type: 'user', text: '⚠ Could not reach the API. Is the backend running?', time: '' },
+        { id: Date.now(), type: 'error', text: 'Could not reach the API. Is the backend running?' },
       ])
     } finally {
       setResponding(false)
@@ -204,8 +204,8 @@ export default function PanelChat() {
     <div className="flex flex-col h-full overflow-hidden">
       {/* Persona bar */}
       <div
-        className="flex items-center gap-2 px-6 py-3 border-b border-border bg-surface flex-shrink-0 overflow-x-auto overflow-y-visible"
-        style={{ scrollbarWidth: 'thin', scrollbarColor: '#2A2A2A transparent', paddingBottom: 14, zIndex: 50, position: 'relative' }}
+        className="flex items-center gap-2 px-6 py-3 border-b border-border bg-surface flex-shrink-0 overflow-x-auto overflow-y-visible scrollbar-persona"
+        style={{ paddingBottom: 14, zIndex: 50, position: 'relative' }}
       >
         <span className="text-[10px] font-semibold uppercase tracking-[1.5px] text-text-muted flex-shrink-0 mr-1">
           Personas
@@ -228,7 +228,7 @@ export default function PanelChat() {
             <div className="text-[11px] font-semibold uppercase tracking-[1px] mb-1">Panel Members</div>
             <div className="text-xs text-text-muted">{selectedPersonas.length} selected</div>
           </div>
-          <div className="flex-1 p-3 overflow-y-auto">
+          <div className="flex-1 p-3 overflow-y-auto scrollbar-thin-y">
             {selectedPersonas.map((persona) => (
               <PanelMember
                 key={persona.slug}
@@ -255,7 +255,7 @@ export default function PanelChat() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
+          <div className="flex-1 overflow-y-auto scrollbar-thin-y p-6 flex flex-col gap-4">
             {messages.map((msg) => (
               <ChatMessage key={msg.id} message={msg} />
             ))}
@@ -268,7 +268,6 @@ export default function PanelChat() {
                     style={{ animation: `pulse-dot 1.4s ease-in-out ${i * 0.2}s infinite` }}
                   />
                 ))}
-                <style>{`@keyframes pulse-dot{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}`}</style>
                 <span>Generating panel responses...</span>
               </div>
             )}
