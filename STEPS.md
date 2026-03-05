@@ -93,7 +93,7 @@ Both partners work in parallel from the start. P1 builds the data pipeline. P2 b
 
 ---
 
-### Step 04 · P2 · `[TODO]` · PersonaChat page + ChatMessage component
+### Step 04 · P2 · `[IN REVIEW]` · PersonaChat page + ChatMessage component
 **Branch:** `p2/step-04-persona-chat`
 **Depends on:** Step 02 merged
 **What to build:**
@@ -153,7 +153,7 @@ P1 builds the processing and embedding pipeline. P2 builds remaining frontend pa
 
 ---
 
-### Step 06 · P2 · `[TODO]` · PanelChat page + PersonaChip component
+### Step 06 · P2 · `[IN REVIEW]` · PanelChat page + PersonaChip component
 **Branch:** `p2/step-06-panel-chat`
 **Depends on:** Step 04 merged
 **What to build:**
@@ -206,7 +206,7 @@ P1 builds the processing and embedding pipeline. P2 builds remaining frontend pa
 
 ---
 
-### Step 08 · P2 · `[TODO]` · CreatePersona page + Home updates
+### Step 08 · P2 · `[IN REVIEW]` · CreatePersona page + Home updates
 **Branch:** `p2/step-08-create-persona`
 **Depends on:** Step 06 merged
 **What to build:**
@@ -269,7 +269,7 @@ P1 builds persona creation and chat generation. P2 wires the frontend to the rea
 
 ---
 
-### Step 10 · P2 · `[TODO]` · Wire frontend to stub API
+### Step 10 · P2 · `[IN REVIEW]` · Wire frontend to stub API
 **Branch:** `p2/step-10-api-wiring`
 **Depends on:** Step 08 merged, Step 01 merged (stub API running)
 **What to build:**
@@ -354,7 +354,7 @@ Both partners converge. P1 builds all demo personas and caches responses. P2 doe
 
 ---
 
-### Step 13 · P2 · `[TODO]` · Visual polish + error states + loading states
+### Step 13 · P2 · `[IN REVIEW]` · Visual polish + error states + loading states
 **Branch:** `p2/step-13-polish`
 **Depends on:** Step 10 merged
 **What to build:**
