@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { createPersona } from '../api'
 
 const MOCK_PREVIEW = {
   description:
@@ -11,6 +12,23 @@ const MOCK_PREVIEW = {
     { label: 'Shopping Triggers', value: 'TikTok virality, end-of-season sales, unique footwear, vintage finds' },
     { label: 'Pain Points', value: 'Quality inconsistency at mid-range, sustainability guilt, fast fashion temptation' },
   ],
+}
+
+function apiToPreview(data) {
+  const a = data.preview_attributes ?? {}
+  return {
+    name: data.name ?? '',
+    corpusStats: data.data_sources?.summary ?? data.corpus_stats?.total_chunks ? `Grounded in ${data.corpus_stats.total_chunks} discourse fragments` : '',
+    description: data.preview_description ?? data.profile?.personality ?? '',
+    attrs: [
+      { label: 'Age & Location', value: a.age_location ?? `${data.age} · ${data.location}` },
+      { label: 'Est. Income', value: a.income ?? data.income },
+      { label: 'Key Brands', value: a.key_brands ?? '' },
+      { label: 'Style Identity', value: a.style_identity ?? data.profile?.style_identity ?? '' },
+      { label: 'Shopping Triggers', value: a.shopping_triggers ?? '' },
+      { label: 'Pain Points', value: a.pain_points ?? '' },
+    ],
+  }
 }
 
 function ProcessingDots() {
@@ -42,20 +60,32 @@ export default function CreatePersona() {
   )
   const [phase, setPhase] = useState('input') // 'input' | 'loading' | 'preview'
   const [personaName, setPersonaName] = useState('')
+  const [preview, setPreview] = useState(MOCK_PREVIEW)
+  const [corpusStats, setCorpusStats] = useState('Grounded in 1,923 discourse fragments')
   const previewRef = useRef(null)
+
+  const runGenerate = async () => {
+    setPhase('loading')
+    try {
+      const data = await createPersona(description.trim())
+      const p = apiToPreview(data)
+      setPreview({ description: p.description, attrs: p.attrs })
+      setPersonaName(p.name)
+      if (p.corpusStats) setCorpusStats(p.corpusStats)
+    } catch {
+      // keep MOCK_PREVIEW as fallback
+    }
+    setPhase('preview')
+    setTimeout(() => previewRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
+  }
 
   const handleGenerate = () => {
     if (!description.trim()) return
-    setPhase('loading')
-    setTimeout(() => {
-      setPhase('preview')
-      setTimeout(() => previewRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
-    }, 2000)
+    runGenerate()
   }
 
   const handleRegenerate = () => {
-    setPhase('loading')
-    setTimeout(() => setPhase('preview'), 2000)
+    runGenerate()
   }
 
   return (
@@ -104,7 +134,7 @@ export default function CreatePersona() {
                 <span className="text-[10px] font-semibold uppercase tracking-[1.5px] text-text-muted">
                   Generated Persona
                 </span>
-                <span className="text-[11px] text-text-muted">Grounded in 1,923 discourse fragments</span>
+                <span className="text-[11px] text-text-muted">{corpusStats}</span>
               </div>
 
               {/* Card body */}
@@ -120,12 +150,12 @@ export default function CreatePersona() {
 
                 {/* Generated description */}
                 <div className="mt-4 p-4 bg-black border border-border rounded-[2px] text-sm leading-[1.7] text-text-secondary">
-                  {MOCK_PREVIEW.description}
+                  {preview.description}
                 </div>
 
                 {/* Attribute grid */}
                 <div className="grid grid-cols-2 gap-2.5 mt-4">
-                  {MOCK_PREVIEW.attrs.map((attr) => (
+                  {preview.attrs.map((attr) => (
                     <div key={attr.label} className="p-3 px-3 border border-border rounded-[2px]">
                       <div className="text-[10px] font-semibold uppercase tracking-[0.5px] text-text-muted mb-0.5">
                         {attr.label}

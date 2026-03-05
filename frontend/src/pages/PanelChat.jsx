@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 import PersonaChip from '../components/PersonaChip'
 import PanelMember from '../components/PanelMember'
 import ChatMessage from '../components/ChatMessage'
+import { sendPanelChat } from '../api'
 
 const ALL_PERSONAS = [
   {
@@ -128,6 +129,7 @@ export default function PanelChat() {
   const [selectedSlugs, setSelectedSlugs] = useState(new Set(config.defaultSlugs))
   const [messages, setMessages] = useState(config.messages)
   const [input, setInput] = useState('')
+  const [responding, setResponding] = useState(false)
   const messagesEndRef = useRef(null)
 
   // Reset when panel slug changes
@@ -140,7 +142,7 @@ export default function PanelChat() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [messages, responding])
 
   const togglePersona = (personaSlug) => {
     setSelectedSlugs((prev) => {
@@ -155,13 +157,40 @@ export default function PanelChat() {
 
   const headerStatus = selectedPersonas.map((p) => p.name).join(', ')
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const text = input.trim()
-    if (!text) return
+    if (!text || responding) return
     const now = new Date()
     const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     setMessages((prev) => [...prev, { id: Date.now(), type: 'user', text, time }])
     setInput('')
+    setResponding(true)
+    try {
+      const data = await sendPanelChat([...selectedSlugs], text)
+      const personaMap = Object.fromEntries(ALL_PERSONAS.map((p) => [p.slug, p]))
+      const responseMessages = (data.responses ?? []).map((r) => {
+        const p = personaMap[r.persona] ?? {}
+        return {
+          id: Date.now() + Math.random(),
+          type: 'persona',
+          name: r.name ?? p.name ?? r.persona,
+          initial: (r.name ?? p.name ?? r.persona)[0].toUpperCase(),
+          demo: r.style_descriptor ? `${r.age}, ${r.style_descriptor}` : '',
+          text: r.response_text,
+          intent: r.purchase_intent,
+          concern: r.key_concern,
+          sources: [],
+        }
+      })
+      setMessages((prev) => [...prev, ...responseMessages])
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now(), type: 'user', text: '⚠ Could not reach the API. Is the backend running?', time: '' },
+      ])
+    } finally {
+      setResponding(false)
+    }
   }
 
   const handleKeyDown = (e) => {
@@ -230,6 +259,19 @@ export default function PanelChat() {
             {messages.map((msg) => (
               <ChatMessage key={msg.id} message={msg} />
             ))}
+            {responding && (
+              <div className="text-[13px] text-text-muted flex items-center gap-2">
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className="w-1.5 h-1.5 rounded-full bg-text-secondary"
+                    style={{ animation: `pulse-dot 1.4s ease-in-out ${i * 0.2}s infinite` }}
+                  />
+                ))}
+                <style>{`@keyframes pulse-dot{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}`}</style>
+                <span>Generating panel responses...</span>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
@@ -243,10 +285,12 @@ export default function PanelChat() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
+                disabled={responding}
               />
               <button
                 onClick={handleSend}
-                className="px-5 py-2.5 bg-white text-black rounded-[2px] text-xs font-semibold uppercase tracking-[0.5px] hover:opacity-85 transition-opacity whitespace-nowrap"
+                disabled={responding}
+                className="px-5 py-2.5 bg-white text-black rounded-[2px] text-xs font-semibold uppercase tracking-[0.5px] hover:opacity-85 transition-opacity whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Send
               </button>

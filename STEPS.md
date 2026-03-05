@@ -269,7 +269,7 @@ P1 builds persona creation and chat generation. P2 wires the frontend to the rea
 
 ---
 
-### Step 10 · P2 · `[TODO]` · Wire frontend to stub API
+### Step 10 · P2 · `[IN REVIEW]` · Wire frontend to stub API
 **Branch:** `p2/step-10-api-wiring`
 **Depends on:** Step 08 merged, Step 01 merged (stub API running)
 **What to build:**
