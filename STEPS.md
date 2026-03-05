@@ -206,7 +206,7 @@ P1 builds the processing and embedding pipeline. P2 builds remaining frontend pa
 
 ---
 
-### Step 08 · P2 · `[TODO]` · CreatePersona page + Home updates
+### Step 08 · P2 · `[IN REVIEW]` · CreatePersona page + Home updates
 **Branch:** `p2/step-08-create-persona`
 **Depends on:** Step 06 merged
 **What to build:**
