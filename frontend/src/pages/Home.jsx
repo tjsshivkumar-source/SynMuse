@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import PersonaMini from '../components/PersonaMini'
+import { fetchPersonas } from '../api'
 
-const PERSONAS = [
+const FALLBACK_PERSONAS = [
   { slug: 'sophie', name: 'Sophie', demo: '26 · London · £45K · Early adopter' },
   { slug: 'priya', name: 'Priya', demo: '31 · Manchester · £38K · Research-driven' },
   { slug: 'marcus', name: 'Marcus', demo: '22 · Birmingham · Student · Depop regular' },
@@ -14,31 +16,31 @@ const PERSONAS = [
 ]
 
 const PANELS = [
-  {
-    slug: 'linen',
-    name: 'SS26 Linen Range Panel',
-    members: ['S', 'P', 'E', 'D'],
-    lastActive: 'Last active 2h ago',
-  },
-  {
-    slug: 'denim',
-    name: 'AW26 Menswear Denim Panel',
-    members: ['J', 'R', 'T', 'M'],
-    lastActive: 'Last active 4h ago',
-  },
-  {
-    slug: 'streetwear',
-    name: 'Gen Z Streetwear Test',
-    members: ['M', 'A', 'S'],
-    lastActive: 'Last active 1d ago',
-  },
+  { slug: 'linen', name: 'SS26 Linen Range Panel', members: ['S', 'P', 'E', 'D'], lastActive: 'Last active 2h ago' },
+  { slug: 'denim', name: 'AW26 Menswear Denim Panel', members: ['J', 'R', 'T', 'M'], lastActive: 'Last active 4h ago' },
+  { slug: 'streetwear', name: 'Gen Z Streetwear Test', members: ['M', 'A', 'S'], lastActive: 'Last active 1d ago' },
 ]
+
+function personaDemo(p) {
+  return [p.age, p.location, p.income, p.style_descriptor].filter(Boolean).join(' · ')
+}
 
 export default function Home() {
   const navigate = useNavigate()
+  const [personas, setPersonas] = useState(FALLBACK_PERSONAS)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchPersonas()
+      .then((data) =>
+        setPersonas(data.map((p) => ({ slug: p.slug, name: p.name, demo: personaDemo(p) })))
+      )
+      .catch(() => {/* keep fallback */})
+      .finally(() => setLoading(false))
+  }, [])
 
   return (
-    <div>
+    <div className="h-full overflow-y-auto p-8 px-10">
       <div className="mb-8">
         <h1 className="text-[22px] font-semibold tracking-[0.5px]">Your workspace</h1>
       </div>
@@ -48,17 +50,24 @@ export default function Home() {
         <div className="bg-surface border border-border rounded-[3px] overflow-hidden">
           <div className="py-3.5 px-[18px] border-b border-border flex items-center justify-between">
             <div className="text-[11px] font-semibold uppercase tracking-[1.5px] text-text-secondary">Personas</div>
-            <div className="text-[11px] text-text-muted bg-surface-active py-0.5 px-2 rounded-[2px]">{PERSONAS.length}</div>
+            <div className="text-[11px] text-text-muted bg-surface-active py-0.5 px-2 rounded-[2px]">{personas.length}</div>
           </div>
           <div className="p-2.5 max-h-[520px] overflow-y-auto">
-            {PERSONAS.map((p) => (
-              <PersonaMini
-                key={p.slug}
-                name={p.name}
-                demo={p.demo}
-                onClick={() => navigate(`/persona/${p.slug}`)}
-              />
-            ))}
+            {loading
+              ? Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="py-3 px-3.5 border border-border rounded-[2px] mb-1.5 animate-pulse">
+                    <div className="h-3.5 bg-surface-active rounded w-1/3 mb-1.5" />
+                    <div className="h-2.5 bg-surface-active rounded w-2/3" />
+                  </div>
+                ))
+              : personas.map((p) => (
+                  <PersonaMini
+                    key={p.slug}
+                    name={p.name}
+                    demo={p.demo}
+                    onClick={() => navigate(`/persona/${p.slug}`)}
+                  />
+                ))}
           </div>
         </div>
 
