@@ -1,0 +1,22 @@
+{
+  "name": "Priya",
+  "age": 31,
+  "location": "Manchester",
+  "income": "£38,000",
+  "style_descriptor": "Quality-focused value hunter",
+  "profile": {
+    "shopping_behaviour": "Rachel researches extensively across platforms before buying from M&S, Next, COS, and Arket (40-70% off). She prefers Vinted for pure wool/linen pieces at £1-3, prioritizing material and manufacturing origin.",
+    "personality": "Rachel maintains fabric composition spreadsheets and gets excited finding 100% cotton basics. She's frustrated by declining quality—her 15-year-old H&M pieces outlast recent purchases.",
+    "style_identity": "Rachel builds timeless basics in natural fibres only (100% cotton, linen, wool), rejecting polyester blends. She invests in skirts with clean lines designed to wear for a decade."
+  },
+  "preview_description": "Rachel, 31, researches purchases obsessively, mourning Abercrombie's 2013-2014 100% cotton basics. She now shops M&S, Next, COS, Arket sales, and Vinted for ethical European brands and vintage pure wool pieces that match her grandmother's hand-me-down longevity.",
+  "preview_attributes": {
+    "age_location": "31 · Manchester",
+    "income": "£38,000",
+    "key_brands": "M&S, Next, COS (sales), Arket (sales), Vinted, vintage European labels",
+    "style_identity": "Natural fibre purist, timeless basics, skirt-focused wardrobe",
+    "shopping_triggers": "100% natural fibres, proven longevity, end-of-season discounts, excellent seam quality",
+    "pain_points": "Polyester infiltration, declining quality at all price points, premature pilling, brands charging premium for subpar manufacturing"
+  },
+  "slug": "priya"
+}

@@ -1,0 +1,22 @@
+{
+  "name": "Emma",
+  "age": 34,
+  "location": "Edinburgh",
+  "income": "£65,000",
+  "style_descriptor": "Considered minimalist investor",
+  "profile": {
+    "shopping_behaviour": "Tracks purchases in spreadsheet by cost-per-wear. Shops COS, Arket, Vinted (filtered by material/origin), and thrifts linen for sewing. Ruthlessly returns items like Aritzia pieces that lack quality justification.",
+    "personality": "Methodical, uses systems like 3-word method and seasonal tracking. Frustrated by mid-tier brand price-to-quality gap. Experiences anxiety about 323-item closet despite donating 67 pieces last year.",
+    "style_identity": "Scandi minimalist seeking natural fibers (100% linen, Made in France). Analyzes seam quality and construction. Prefers Arket/COS level where fabric quality justifies cost; aspires to luxury but values substance over prestige."
+  },
+  "preview_description": "Fiona, 34, shops intentionally at COS and Arket while sourcing quality pieces on Vinted, tracking cost-per-wear in spreadsheets. She judges garments by fabric, construction, and origin rather than labels, reducing her 323-item closet to achieve 91% usage last year.",
+  "preview_attributes": {
+    "age_location": "34 · Edinburgh",
+    "income": "£65,000",
+    "key_brands": "COS, Arket, Vinted, M&S, vintage French brands, independent makers",
+    "style_identity": "Scandi minimalist with natural fiber obsession",
+    "shopping_triggers": "Exceptional fabric quality, ethical manufacturing, proven cost-per-wear potential, pieces that solve identified wardrobe gaps",
+    "pain_points": "Mid-tier brands charging premium prices for fast fashion quality, emotional attachment to unworn clothes, marketing pressure to buy trendy pieces that don't suit her style"
+  },
+  "slug": "emma"
+}

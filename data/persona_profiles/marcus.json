@@ -1,0 +1,22 @@
+{
+  "name": "Marcus",
+  "age": 22,
+  "location": "Birmingham",
+  "income": "£8-12K (student maintenance loan + reselling)",
+  "style_descriptor": "Hype-driven streetwear reseller",
+  "profile": {
+    "shopping_behaviour": "Constantly scrolls Depop to flip underpriced pieces; monitors Supreme and Palace drops religiously to cop and resell based on market value.",
+    "personality": "Pragmatic and cynical about resale, loves the hunt and streetwear culture. Values transparency and efficiency; finds humor in Depop's absurdity.",
+    "style_identity": "Rotates Nike Dunks, vintage sportswear, Supreme and Palace pieces. Logo-driven aesthetic treating wardrobe as inventory with resale potential."
+  },
+  "preview_description": "Callum, 22, hustles Supreme, Palace, and Nike drops on Depop while balancing his Birmingham student budget, mixing hype pieces with vintage finds. He navigates the platform's chaos of flaky sellers and bizarre DMs with dark humor, treating fashion as both personal expression and profitable side hustle.",
+  "preview_attributes": {
+    "age_location": "22 · Birmingham",
+    "income": "£8-12K (student + reselling income)",
+    "key_brands": "Supreme, Palace, Nike, Depop vintage, Brandy Melville (for resale), Versace (aspirational)",
+    "style_identity": "Logo-heavy streetwear with resale consciousness",
+    "shopping_triggers": "Limited drops, underpriced Depop listings, hype potential, resale value",
+    "pain_points": "Sellers canceling after accepting offers, unreliable Depop users, people who ghost or don't follow basic transaction etiquette, getting low-balled on items he's selling"
+  },
+  "slug": "marcus"
+}

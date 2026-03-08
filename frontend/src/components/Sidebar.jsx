@@ -1,12 +1,14 @@
 import { Link, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { getRecents } from '../recents'
 
 const WORKSPACE_NAV = [
   { icon: '⊞', label: 'Home', path: '/' },
   { icon: '+', label: 'New Persona', path: '/create' },
-  { icon: '⊕', label: 'New Panel', path: '/panel/linen' },
+  { icon: '⊕', label: 'New Panel', path: '/panel/new' },
 ]
 
-const RECENT_NAV = [
+const DEFAULT_RECENTS = [
   { icon: '◯', label: 'Sophie — Trend-Forward', path: '/persona/sophie' },
   { icon: '◯', label: 'Jordan — Archive Collector', path: '/persona/jordan' },
   { icon: '◻', label: 'SS26 Linen Panel', path: '/panel/linen' },
@@ -17,6 +19,19 @@ const USER = { initials: 'TN', name: 'Tejas N.', email: 'tejas@brand.co' }
 
 export default function Sidebar() {
   const location = useLocation()
+  const [recents, setRecents] = useState(() => {
+    const saved = getRecents()
+    return saved.length > 0 ? saved : DEFAULT_RECENTS
+  })
+
+  useEffect(() => {
+    const handler = () => {
+      const saved = getRecents()
+      if (saved.length > 0) setRecents(saved)
+    }
+    window.addEventListener('recents-updated', handler)
+    return () => window.removeEventListener('recents-updated', handler)
+  }, [])
 
   const isActive = (path) => {
     if (path === '/') return location.pathname === '/'
@@ -53,9 +68,9 @@ export default function Sidebar() {
         <div className="text-[10px] font-semibold uppercase tracking-[1.5px] text-text-muted px-6 mb-2 mt-7">
           Recent
         </div>
-        {RECENT_NAV.map((item) => (
+        {recents.map((item) => (
           <Link
-            key={item.path + item.label}
+            key={item.path}
             to={item.path}
             className={`flex items-center gap-2.5 py-2 px-6 text-[13px] font-medium cursor-pointer transition-all border-l-2 no-underline ${
               isActive(item.path)

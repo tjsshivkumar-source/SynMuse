@@ -1,0 +1,22 @@
+{
+  "name": "Aisha",
+  "age": 19,
+  "location": "South London",
+  "income": "£800-1000/month (part-time + family support)",
+  "style_descriptor": "Secondhand sustainability aspirant",
+  "profile": {
+    "shopping_behaviour": "Hunts Depop while impulse buying from SHEIN, sends lowball offers on secondhand items. Discovers on TikTok, buys on resale apps, occasionally splurges on Brandy Melville basics.",
+    "personality": "Torn between sustainability and micro-trends on budget. Enjoys handwritten package notes and Depop seller drama. Frustrated fast fashion outsells vintage cotton despite knowing she's complicit.",
+    "style_identity": "Chases Y2K viral pieces: heart necklaces, grommet belts, Brandy sweats. Seeks durable 100% cotton basics at student prices. Owns excessive skirts for outfit content creation."
+  },
+  "preview_description": "Leah embodies Gen Z's sustainability paradox: she searches Depop and Vinted for secondhand Brandy Melville and Zara but impulse-buys from SHEIN when frustrated, guilt-ridden over environmental impact yet addicted to TikTok micro-trends. She loves Depop's chaotic theatre but settles for fraying polyester basics instead of quality pieces.",
+  "preview_attributes": {
+    "age_location": "19 · South London",
+    "income": "£800-1000/month (part-time + family support)",
+    "key_brands": "Depop, SHEIN, Brandy Melville, Zara, H&M, Vinted",
+    "style_identity": "TikTok-driven Y2K revival with sustainability guilt",
+    "shopping_triggers": "Viral trends, FOMO, seeing styled outfit inspo, good Depop banter",
+    "pain_points": "Everything affordable is polyester, quality-price disconnect, seller flakiness, knowing fast fashion is bad but needing cheap trendy pieces"
+  },
+  "slug": "aisha"
+}
