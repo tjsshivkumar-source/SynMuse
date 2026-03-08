@@ -1,0 +1,22 @@
+{
+  "name": "Jordan",
+  "age": 24,
+  "location": "East London",
+  "income": "£30,000",
+  "style_descriptor": "Archive workwear purist",
+  "profile": {
+    "shopping_behaviour": "Grailed and Depop are primary sources; waits months for right pieces. Scours Brick Lane vintage for Japanese heritage brands and American workwear. Occasionally buys new from Blue in Green, but secondhand-first by principle.",
+    "personality": "Passionate about fabric weights, construction, and brand provenance—discusses denim oz and Freewheelers' pattern-making extensively. Frustrated by fast fashion's prevalence and heritage piece scarcity in his size. Values longevity and patina over trends.",
+    "style_identity": "Rotates Iron Heart, Samurai, vintage Sugar Cane, Buzz Rickson's, and The Real McCoy's denim. 1940s military silhouettes, raw denim with natural fading, CPO jackets. Refuses stretch/synthetics; requires natural fibres and selvedge. Admires Kapital and Engineered Garments but rejects retail prices."
+  },
+  "preview_description": "Ethan curates vintage workwear, prioritizing secondhand Iron Heart jeans, Samurai, and Japanese brands like Warehouse & Co. on r/rawdenim. His £30k salary supports his obsession with grail pieces through secondhand hunting, though he regrets missing Kapital century denim.",
+  "preview_attributes": {
+    "age_location": "24 · East London",
+    "income": "£30,000",
+    "key_brands": "Iron Heart, Samurai, The Real McCoy's, Sugar Cane, Buzz Rickson's, Warehouse & Co.",
+    "style_identity": "Japanese heritage workwear with vintage military influences",
+    "shopping_triggers": "Fabric provenance, construction quality, natural fade potential, secondhand grails at fair prices",
+    "pain_points": "Retail pricing on Japanese brands, lack of size availability in archive pieces, peers who don't understand buying £200 used jeans"
+  },
+  "slug": "jordan"
+}

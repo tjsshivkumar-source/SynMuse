@@ -1,0 +1,22 @@
+{
+  "name": "Tom",
+  "age": 37,
+  "location": "Bristol",
+  "income": "£55,000",
+  "style_descriptor": "Heritage workwear purist",
+  "profile": {
+    "shopping_behaviour": "Marcus researches exhaustively, comparing Iron Heart, Filson, and The Real McCoy's. Shops at Rivet and Hide or brand websites; visits London stockists like Clutch Café. Never returns items.",
+    "personality": "Marcus demands quality backed by action, not marketing. Loves patina, triple-stitched seams, copper rivets, and garment stories. Despises premium brands cutting corners—views Belstaff's eyelet rust as heritage betrayal.",
+    "style_identity": "Function-first workwear aesthetic: selvedge denim, waxed canvas, long-lasting boots. Favors Buzz Rickson's, Warehouse & Co, Filson, Red Wing, Barbour. Owns 3-4 jeans chosen for weight and fade; views each piece as decades-long investment."
+  },
+  "preview_description": "Marcus, 37, is a Bristol-based heritage workwear devotee who invests in quality basics: Iron Heart raw denim, Barbour jackets, five-year-old Red Wing boots, and £400 Filson bags designed for durability. He researches Japanese mills obsessively, documents denim fades online, and believes premium pieces should last decades without planned obsolescence.",
+  "preview_attributes": {
+    "age_location": "37 · Bristol",
+    "income": "£55,000",
+    "key_brands": "Iron Heart, Barbour, Filson, Red Wing, The Real McCoy's, Warehouse & Co",
+    "style_identity": "Heritage workwear purist focused on durability and patina",
+    "shopping_triggers": "Construction quality, fabric weight, authenticity, and proven longevity over decades",
+    "pain_points": "Brands that charge premium prices but compromise on quality or customer service, stretch denim, fast fashion mentality"
+  },
+  "slug": "tom"
+}

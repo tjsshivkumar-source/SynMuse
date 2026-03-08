@@ -1,0 +1,22 @@
+{
+  "name": "Sophie",
+  "age": 26,
+  "location": "London",
+  "income": "£45,000",
+  "style_descriptor": "Minimalist with trend accents",
+  "profile": {
+    "shopping_behaviour": "Shops Zara, COS, & Other Stories for trends and Depop for vintage. Active reseller with 30% return rate; scrutinizes stitching and fabric composition.",
+    "personality": "Excited by TikTok trends but cynical about fast fashion quality. Frustrated that quiet luxury requires vintage hunting or higher budgets than high-street offers.",
+    "style_identity": "Minimalist aesthetic with trend accents. Hunts Vinted and Depop for natural fibres and European vintage; judges quality by seams, lining, fabric—not brand names."
+  },
+  "preview_description": "Mia, 26, earns £45,000 in London and cycles between Zara, COS, and & Other Stories while returning 30% of purchases for poor quality. She now prioritizes Depop and Vinted for vintage wool and 100% cotton basics, mixing timeless pieces with TikTok trends while hunting quiet luxury on budget.",
+  "preview_attributes": {
+    "age_location": "26 · London",
+    "income": "£45,000",
+    "key_brands": "Zara, COS, & Other Stories, Depop, Vinted, Massimo Dutti (vintage)",
+    "style_identity": "Minimalist with trend accents, quiet luxury aspirant",
+    "shopping_triggers": "TikTok trends, natural fibres, vintage quality, newness, good fabric composition",
+    "pain_points": "Polyester blends, visible poor stitching, items that don't match photos, fast fashion quality degradation, quiet luxury price points"
+  },
+  "slug": "sophie"
+}

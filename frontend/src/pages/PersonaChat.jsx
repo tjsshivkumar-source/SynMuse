@@ -1,7 +1,9 @@
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
 import ChatMessage from '../components/ChatMessage'
-import { fetchPersona, sendChat } from '../api'
+import { fetchPersona, sendChat, updatePersona, deletePersona } from '../api'
+import { addRecentVisit } from '../recents'
+import { removePersonaFromPanels } from '../panels'
 
 // Fallback data so the page still looks good without the backend
 const FALLBACK = {
@@ -91,19 +93,44 @@ function ProcessingDots() {
 
 export default function PersonaChat() {
   const { slug } = useParams()
+  const navigate = useNavigate()
   const [persona, setPersona] = useState(FALLBACK[slug] || FALLBACK.sophie)
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`chat_persona_${slug}`)
+      return saved ? JSON.parse(saved) : []
+    } catch { return [] }
+  })
   const [input, setInput] = useState('')
   const [responding, setResponding] = useState(false)
+  const [editingName, setEditingName] = useState(false)
+  const [nameDraft, setNameDraft] = useState('')
   const messagesEndRef = useRef(null)
+  const slugRef = useRef(slug)
+  slugRef.current = slug
+
+  // Save messages to localStorage — only depends on messages, uses ref for slug
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem(`chat_persona_${slugRef.current}`, JSON.stringify(messages))
+    }
+  }, [messages])
 
   useEffect(() => {
-    setMessages([])
+    try {
+      const saved = localStorage.getItem(`chat_persona_${slug}`)
+      setMessages(saved ? JSON.parse(saved) : [])
+    } catch { setMessages([]) }
     setInput('')
     const fallback = FALLBACK[slug] || { name: slug, initial: slug[0].toUpperCase(), headerStatus: '', detailDemo: '', profile: { income: '', shoppingBehaviour: '', personality: '', styleIdentity: '' }, sources: { summary: '', items: [] } }
     setPersona(fallback)
+    addRecentVisit(`/persona/${slug}`, `${fallback.name} — ${fallback.headerStatus.split(' · ')[0] || ''}`, '◯')
     fetchPersona(slug)
-      .then((data) => setPersona(apiToDisplayPersona(data)))
+      .then((data) => {
+        const display = apiToDisplayPersona(data)
+        setPersona(display)
+        addRecentVisit(`/persona/${slug}`, `${display.name} — ${display.headerStatus.split(' · ')[0] || ''}`, '◯')
+      })
       .catch(() => {/* keep fallback */})
   }, [slug])
 
@@ -120,7 +147,8 @@ export default function PersonaChat() {
     setInput('')
     setResponding(true)
     try {
-      const data = await sendChat(slug, text, [])
+      const history = messages.filter(m => m.type === 'user' || m.type === 'persona').map(m => ({ type: m.type, text: m.text }))
+      const data = await sendChat(slug, text, history)
       setMessages((prev) => [...prev, apiToMessage(data, persona.name, persona.initial)])
     } catch {
       setMessages((prev) => [
@@ -134,6 +162,29 @@ export default function PersonaChat() {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() }
+  }
+
+  const handleNameSave = async () => {
+    const trimmed = nameDraft.trim()
+    if (!trimmed || trimmed === persona.name) {
+      setEditingName(false)
+      return
+    }
+    try {
+      await updatePersona(slug, { name: trimmed })
+      setPersona((prev) => ({ ...prev, name: trimmed, initial: trimmed[0] }))
+    } catch { /* keep old name */ }
+    setEditingName(false)
+  }
+
+  const handleDelete = async () => {
+    if (!window.confirm(`Delete ${persona.name}? This will remove all their data and remove them from any panels.`)) return
+    try {
+      await deletePersona(slug)
+    } catch { /* best effort */ }
+    removePersonaFromPanels(slug)
+    localStorage.removeItem(`chat_persona_${slug}`)
+    navigate('/')
   }
 
   return (
@@ -186,7 +237,26 @@ export default function PersonaChat() {
       {/* Right: Detail panel */}
       <div className="w-[380px] min-w-[380px] bg-black-soft overflow-y-auto p-6">
         <div className="mb-6">
-          <div className="text-xl font-bold tracking-[0.5px] mb-0.5">{persona.name}</div>
+          {editingName ? (
+            <div className="flex items-center gap-2">
+              <input
+                autoFocus
+                className="text-xl font-bold tracking-[0.5px] bg-surface border border-border rounded-[2px] px-2 py-0.5 text-text-primary outline-none focus:border-text-muted font-sans w-full"
+                value={nameDraft}
+                onChange={(e) => setNameDraft(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleNameSave(); if (e.key === 'Escape') setEditingName(false) }}
+                onBlur={handleNameSave}
+              />
+            </div>
+          ) : (
+            <div
+              className="text-xl font-bold tracking-[0.5px] mb-0.5 cursor-pointer hover:text-text-secondary transition-colors"
+              onClick={() => { setNameDraft(persona.name); setEditingName(true) }}
+              title="Click to rename"
+            >
+              {persona.name}
+            </div>
+          )}
           <div className="text-[13px] text-text-muted">{persona.detailDemo}</div>
         </div>
 
@@ -233,6 +303,14 @@ export default function PersonaChat() {
             ))}
           </div>
         </div>
+
+        <div className="h-px bg-border my-6" />
+        <button
+          onClick={handleDelete}
+          className="w-full py-2 text-xs text-text-muted hover:text-red-400 hover:bg-red-400/10 border border-transparent hover:border-red-400/30 rounded-[2px] transition-all"
+        >
+          Delete Persona
+        </button>
       </div>
     </div>
   )
