@@ -14,6 +14,9 @@ export const fetchPersonas = () => request('GET', '/api/personas')
 
 export const fetchPersona = (slug) => request('GET', `/api/personas/${slug}`)
 
+export const updatePersona = (slug, updates) =>
+  request('PATCH', `/api/personas/${slug}`, updates)
+
 export const createPersona = (description, liveScrape = false) =>
   request('POST', '/api/personas/create', { description, live_scrape: liveScrape })
 
@@ -26,3 +29,5 @@ export const sendChat = (personaSlug, question, history = []) =>
 
 export const sendPanelChat = (personaSlugs, question) =>
   request('POST', '/api/chat/panel', { persona_slugs: personaSlugs, question })
+
+export const deletePersona = (slug) => request('DELETE', `/api/personas/${slug}`)

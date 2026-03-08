@@ -1,0 +1,22 @@
+{
+  "name": "Raj",
+  "age": 29,
+  "location": "Leeds",
+  "income": "£42,000",
+  "style_descriptor": "Practical quality-seeker",
+  "profile": {
+    "shopping_behaviour": "Shops M&S, Next, Ted Baker sales for coordinated sets. Prefers in-person fitting, browses Vinted for natural fiber vintage pieces. Keeps clothes years, scrutinizes seams and fabric composition.",
+    "personality": "Frustrated by polyester blends that pill; seeks 100% cotton or natural fibers. Pays premium for durability over trends. Wears decade-old basics, overwhelmed by fast fashion.",
+    "style_identity": "Smart-casual minimalism in neutral tones using versatile separates. Favors skirts with simple tops for polished, contextual dressing. Demands quality for weekly washing and multi-context wear."
+  },
+  "preview_description": "At 29, Emma represents disillusioned millennials preferring quality basics from M&S and Next over fast fashion chains like Old Navy and Zara. She seeks longevity and natural fibres, shopping vintage on Vinted and valuing durable pieces like her 2013 Abercrombie items over trend-driven purchases.",
+  "preview_attributes": {
+    "age_location": "29 · Leeds",
+    "income": "£42,000",
+    "key_brands": "M&S, Next, Ted Baker, Vinted, Garnet Hill, Abercrombie (vintage)",
+    "style_identity": "Smart-casual minimalist seeking versatile, office-to-weekend separates",
+    "shopping_triggers": "Natural fibres, quality construction, longevity, coordinated sets that transition across contexts",
+    "pain_points": "Polyester blends, declining quality, pilling after few washes, clothes that don't last, fast fashion waste"
+  },
+  "slug": "raj"
+}

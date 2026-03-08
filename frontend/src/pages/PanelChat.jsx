@@ -1,11 +1,13 @@
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
 import PersonaChip from '../components/PersonaChip'
 import PanelMember from '../components/PanelMember'
 import ChatMessage from '../components/ChatMessage'
-import { sendPanelChat } from '../api'
+import { sendPanelChat, fetchPersonas } from '../api'
+import { addRecentVisit } from '../recents'
+import { getPanel, savePanel, deletePanel as removePanelFromStorage, slugify } from '../panels'
 
-const ALL_PERSONAS = [
+const FALLBACK_PERSONAS = [
   {
     slug: 'sophie', initial: 'S', name: 'Sophie', age: 26,
     role: 'Trend-Forward', demo: '26 · Trend-forward',
@@ -53,6 +55,19 @@ const ALL_PERSONAS = [
   },
 ]
 
+function apiPersonaToChip(p) {
+  return {
+    slug: p.slug,
+    initial: p.name[0].toUpperCase(),
+    name: p.name,
+    age: p.age || '',
+    role: p.style_descriptor || '',
+    demo: [p.age, p.style_descriptor].filter(Boolean).join(' · '),
+    tooltip: [p.style_descriptor, p.location, p.income].filter(Boolean).join(' · '),
+  }
+}
+
+// Pre-seeded demo conversations for linen and denim panels
 const PANEL_CONFIG = {
   linen: {
     name: 'SS26 Linen Range Panel',
@@ -116,33 +131,94 @@ const PANEL_CONFIG = {
   },
 }
 
-const FALLBACK_CONFIG = {
-  name: 'Panel',
-  defaultSlugs: [],
-  messages: [],
-}
-
 export default function PanelChat() {
   const { slug } = useParams()
-  const config = PANEL_CONFIG[slug] || FALLBACK_CONFIG
+  const navigate = useNavigate()
+  const isNew = slug === 'new'
 
-  const [selectedSlugs, setSelectedSlugs] = useState(new Set(config.defaultSlugs))
-  const [messages, setMessages] = useState(config.messages)
+  // Load panel from localStorage, fallback to PANEL_CONFIG for demo panels
+  const savedPanel = !isNew ? getPanel(slug) : null
+  const config = PANEL_CONFIG[slug] || null
+
+  const initialName = savedPanel?.name || config?.name || ''
+  const initialSlugs = savedPanel?.personaSlugs || config?.defaultSlugs || []
+
+  const [allPersonas, setAllPersonas] = useState(FALLBACK_PERSONAS)
+  const [panelName, setPanelName] = useState(isNew ? '' : initialName)
+  const [selectedSlugs, setSelectedSlugs] = useState(new Set(initialSlugs))
+  const [messages, setMessages] = useState(() => {
+    if (isNew) return []
+    try {
+      const saved = localStorage.getItem(`chat_panel_${slug}`)
+      return saved ? JSON.parse(saved) : (config?.messages || [])
+    } catch { return config?.messages || [] }
+  })
   const [input, setInput] = useState('')
   const [responding, setResponding] = useState(false)
+  const [editingName, setEditingName] = useState(isNew)
   const messagesEndRef = useRef(null)
+  const slugRef = useRef(slug)
+  slugRef.current = slug
+
+  // Fetch all personas from API (so newly created ones appear)
+  useEffect(() => {
+    fetchPersonas()
+      .then((data) => {
+        const fallbackMap = Object.fromEntries(FALLBACK_PERSONAS.map((p) => [p.slug, p]))
+        const merged = data.map((p) => fallbackMap[p.slug] || apiPersonaToChip(p))
+        // Add any fallback personas not returned by API (offline safety)
+        const seenSlugs = new Set(data.map((p) => p.slug))
+        for (const fb of FALLBACK_PERSONAS) {
+          if (!seenSlugs.has(fb.slug)) merged.push(fb)
+        }
+        setAllPersonas(merged)
+      })
+      .catch(() => {/* keep fallback */})
+  }, [])
+
+  // Save messages to localStorage
+  useEffect(() => {
+    if (messages.length > 0 && slugRef.current !== 'new') {
+      localStorage.setItem(`chat_panel_${slugRef.current}`, JSON.stringify(messages))
+    }
+  }, [messages])
 
   // Reset when panel slug changes
   useEffect(() => {
-    const c = PANEL_CONFIG[slug] || FALLBACK_CONFIG
-    setSelectedSlugs(new Set(c.defaultSlugs))
-    setMessages(c.messages)
+    if (slug === 'new') {
+      setSelectedSlugs(new Set())
+      setMessages([])
+      setPanelName('')
+      setEditingName(true)
+      setInput('')
+      return
+    }
+    const panel = getPanel(slug)
+    const c = PANEL_CONFIG[slug] || null
+    const slugs = panel?.personaSlugs || c?.defaultSlugs || []
+    setPanelName(panel?.name || c?.name || slug)
+    setSelectedSlugs(new Set(slugs))
+    try {
+      const saved = localStorage.getItem(`chat_panel_${slug}`)
+      setMessages(saved ? JSON.parse(saved) : (c?.messages || []))
+    } catch { setMessages(c?.messages || []) }
     setInput('')
+    setEditingName(false)
+    addRecentVisit(`/panel/${slug}`, panel?.name || c?.name || slug, '◻')
   }, [slug])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, responding])
+
+  // Persist persona selection to saved panel
+  useEffect(() => {
+    if (isNew || !panelName.trim()) return
+    const existing = getPanel(slug)
+    if (existing) {
+      savePanel({ ...existing, personaSlugs: [...selectedSlugs] })
+    }
+  }, [selectedSlugs])
 
   const togglePersona = (personaSlug) => {
     setSelectedSlugs((prev) => {
@@ -153,13 +229,39 @@ export default function PanelChat() {
     })
   }
 
-  const selectedPersonas = ALL_PERSONAS.filter((p) => selectedSlugs.has(p.slug))
-
+  const selectedPersonas = allPersonas.filter((p) => selectedSlugs.has(p.slug))
   const headerStatus = selectedPersonas.map((p) => p.name).join(', ')
+
+  const handleSavePanel = () => {
+    const name = panelName.trim()
+    if (!name) return
+    const panelSlug = isNew ? slugify(name) : slug
+    savePanel({
+      slug: panelSlug,
+      name,
+      personaSlugs: [...selectedSlugs],
+      createdAt: Date.now(),
+    })
+    if (isNew) {
+      navigate(`/panel/${panelSlug}`, { replace: true })
+    }
+  }
+
+  const handleDeletePanel = () => {
+    if (!window.confirm(`Delete panel "${panelName}"? This cannot be undone.`)) return
+    removePanelFromStorage(slug)
+    navigate('/')
+  }
 
   const handleSend = async () => {
     const text = input.trim()
-    if (!text || responding) return
+    if (!text || responding || selectedSlugs.size === 0) return
+
+    // Auto-save panel if it's new and has a name
+    if (isNew && panelName.trim()) {
+      handleSavePanel()
+    }
+
     const now = new Date()
     const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     setMessages((prev) => [...prev, { id: Date.now(), type: 'user', text, time }])
@@ -167,7 +269,7 @@ export default function PanelChat() {
     setResponding(true)
     try {
       const data = await sendPanelChat([...selectedSlugs], text)
-      const personaMap = Object.fromEntries(ALL_PERSONAS.map((p) => [p.slug, p]))
+      const personaMap = Object.fromEntries(allPersonas.map((p) => [p.slug, p]))
       const responseMessages = (data.responses ?? []).map((r) => {
         const p = personaMap[r.persona] ?? {}
         return {
@@ -200,6 +302,8 @@ export default function PanelChat() {
     }
   }
 
+  const isSaved = !isNew && !!getPanel(slug)
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Persona bar */}
@@ -210,7 +314,7 @@ export default function PanelChat() {
         <span className="text-[10px] font-semibold uppercase tracking-[1.5px] text-text-muted flex-shrink-0 mr-1">
           Personas
         </span>
-        {ALL_PERSONAS.map((persona) => (
+        {allPersonas.map((persona) => (
           <PersonaChip
             key={persona.slug}
             persona={persona}
@@ -246,16 +350,62 @@ export default function PanelChat() {
         <div className="flex-1 min-w-0 flex flex-col bg-black overflow-hidden">
           {/* Chat header */}
           <div className="flex items-center gap-3 px-6 py-4 border-b border-border bg-surface flex-shrink-0">
-            <div>
-              <div className="text-sm font-semibold">{config.name}</div>
+            <div className="flex-1 min-w-0">
+              {editingName ? (
+                <input
+                  autoFocus
+                  className="text-sm font-semibold bg-surface border border-border rounded-[2px] px-2 py-0.5 text-text-primary outline-none focus:border-text-muted font-sans w-full max-w-[300px]"
+                  placeholder="Panel name..."
+                  value={panelName}
+                  onChange={(e) => setPanelName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') { handleSavePanel(); setEditingName(false) }
+                    if (e.key === 'Escape') setEditingName(false)
+                  }}
+                  onBlur={() => { if (!isNew) setEditingName(false) }}
+                />
+              ) : (
+                <div
+                  className="text-sm font-semibold cursor-pointer hover:text-text-secondary transition-colors"
+                  onClick={() => setEditingName(true)}
+                  title="Click to rename"
+                >
+                  {panelName || 'Untitled Panel'}
+                </div>
+              )}
               <div className="text-xs text-text-muted">
                 {headerStatus || 'No personas selected'}
               </div>
+            </div>
+            <div className="flex gap-2 flex-shrink-0">
+              {!isSaved && (
+                <button
+                  onClick={handleSavePanel}
+                  disabled={!panelName.trim() || selectedSlugs.size === 0}
+                  className="px-4 py-1.5 bg-white text-black rounded-[2px] text-[11px] font-semibold uppercase tracking-[0.5px] hover:opacity-85 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Save Panel
+                </button>
+              )}
+              {!isNew && (
+                <button
+                  onClick={handleDeletePanel}
+                  className="px-3 py-1.5 text-text-muted text-[11px] border border-border rounded-[2px] hover:text-red-400 hover:border-red-400/50 transition-all"
+                  title="Delete panel"
+                >
+                  Delete
+                </button>
+              )}
             </div>
           </div>
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto scrollbar-thin-y p-6 flex flex-col gap-4">
+            {messages.length === 0 && !responding && (
+              <div className="text-[13px] text-text-muted text-center mt-8">
+                {isNew ? 'Add personas above, name your panel, then ask a question.' : 'Ask the panel a question to get started.'}
+              </div>
+            )}
             {messages.map((msg) => (
               <ChatMessage key={msg.id} message={msg} />
             ))}
@@ -280,15 +430,15 @@ export default function PanelChat() {
               <input
                 type="text"
                 className="flex-1 bg-black border border-border rounded-[2px] px-4 py-2.5 text-sm text-text-primary placeholder-text-muted outline-none focus:border-text-muted font-sans"
-                placeholder="Ask the panel a question..."
+                placeholder={selectedSlugs.size === 0 ? 'Select personas first...' : 'Ask the panel a question...'}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                disabled={responding}
+                disabled={responding || selectedSlugs.size === 0}
               />
               <button
                 onClick={handleSend}
-                disabled={responding}
+                disabled={responding || selectedSlugs.size === 0}
                 className="px-5 py-2.5 bg-white text-black rounded-[2px] text-xs font-semibold uppercase tracking-[0.5px] hover:opacity-85 transition-opacity whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Send
