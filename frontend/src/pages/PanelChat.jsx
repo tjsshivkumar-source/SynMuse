@@ -6,6 +6,7 @@ import ChatMessage from '../components/ChatMessage'
 import { sendPanelChat, fetchPersonas } from '../api'
 import { addRecentVisit } from '../recents'
 import { getPanel, savePanel, deletePanel as removePanelFromStorage, slugify } from '../panels'
+import { generateReport } from '../reportGenerator'
 
 const FALLBACK_PERSONAS = [
   {
@@ -295,6 +296,17 @@ export default function PanelChat() {
     }
   }
 
+  const handleExport = () => {
+    const html = generateReport(messages, panelName)
+    const blob = new Blob([html], { type: 'text/html' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `synmuse-report-${Date.now()}.html`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
@@ -378,6 +390,13 @@ export default function PanelChat() {
               </div>
             </div>
             <div className="flex gap-2 flex-shrink-0">
+              <button
+                onClick={handleExport}
+                disabled={messages.filter(m => m.type === 'persona').length === 0}
+                className="px-3 py-1.5 border border-border rounded-[2px] text-[11px] text-text-secondary uppercase tracking-[0.5px] hover:border-border-hover hover:text-text-primary transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Export
+              </button>
               {!isSaved && (
                 <button
                   onClick={handleSavePanel}
