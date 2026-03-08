@@ -20,7 +20,7 @@ Both partners work in parallel from the start. P1 builds the data pipeline. P2 b
 
 ---
 
-### Step 01 · P1 · `[TODO]` · Repo scaffold + backend skeleton
+### Step 01 · P1 · `[DONE]` · Repo scaffold + backend skeleton
 **Branch:** `p1/step-01-backend-scaffold`
 **What to build:**
 - Create full directory structure from CLAUDE.md
@@ -42,7 +42,7 @@ Both partners work in parallel from the start. P1 builds the data pipeline. P2 b
 
 ---
 
-### Step 02 · P2 · `[TODO]` · Frontend scaffold + design system
+### Step 02 · P2 · `[DONE]` · Frontend scaffold + design system
 **Branch:** `p2/step-02-frontend-scaffold`
 **What to build:**
 - `frontend/` with Vite + React + Tailwind setup
@@ -70,7 +70,7 @@ Both partners work in parallel from the start. P1 builds the data pipeline. P2 b
 
 ---
 
-### Step 03 · P1 · `[TODO]` · Reddit scraper
+### Step 03 · P1 · `[DONE]` · Reddit scraper (httpx, no PRAW)
 **Branch:** `p1/step-03-reddit-scraper`
 **Depends on:** Step 01 merged
 **What to build:**
@@ -93,7 +93,7 @@ Both partners work in parallel from the start. P1 builds the data pipeline. P2 b
 
 ---
 
-### Step 04 · P2 · `[IN REVIEW]` · PersonaChat page + ChatMessage component
+### Step 04 · P2 · `[DONE]` · PersonaChat page + ChatMessage component
 **Branch:** `p2/step-04-persona-chat`
 **Depends on:** Step 02 merged
 **What to build:**
@@ -122,7 +122,7 @@ P1 builds the processing and embedding pipeline. P2 builds remaining frontend pa
 
 ---
 
-### Step 05 · P1 · `[TODO]` · Chunker + source router + article loader
+### Step 05 · P1 · `[DONE]` · Chunker + source router + article loader
 **Branch:** `p1/step-05-processing-pipeline`
 **Depends on:** Step 03 merged (needs raw data in `data/raw/`)
 **What to build:**
@@ -153,7 +153,7 @@ P1 builds the processing and embedding pipeline. P2 builds remaining frontend pa
 
 ---
 
-### Step 06 · P2 · `[IN REVIEW]` · PanelChat page + PersonaChip component
+### Step 06 · P2 · `[DONE]` · PanelChat page + PersonaChip component
 **Branch:** `p2/step-06-panel-chat`
 **Depends on:** Step 04 merged
 **What to build:**
@@ -174,7 +174,7 @@ P1 builds the processing and embedding pipeline. P2 builds remaining frontend pa
 
 ---
 
-### Step 07 · P1 · `[TODO]` · Extractor + embedder + ChromaDB collection manager
+### Step 07 · P1 · `[DONE]` · Extractor + embedder + ChromaDB collection manager
 **Branch:** `p1/step-07-vectorstore`
 **Depends on:** Step 05 merged
 **What to build:**
@@ -206,7 +206,7 @@ P1 builds the processing and embedding pipeline. P2 builds remaining frontend pa
 
 ---
 
-### Step 08 · P2 · `[IN REVIEW]` · CreatePersona page + Home updates
+### Step 08 · P2 · `[DONE]` · CreatePersona page + Home updates
 **Branch:** `p2/step-08-create-persona`
 **Depends on:** Step 06 merged
 **What to build:**
@@ -235,7 +235,7 @@ P1 builds persona creation and chat generation. P2 wires the frontend to the rea
 
 ---
 
-### Step 09 · P1 · `[TODO]` · Persona creation pipeline
+### Step 09 · P1 · `[DONE]` · Persona creation pipeline
 **Branch:** `p1/step-09-persona-creator`
 **Depends on:** Step 07 merged
 **What to build:**
@@ -269,7 +269,7 @@ P1 builds persona creation and chat generation. P2 wires the frontend to the rea
 
 ---
 
-### Step 10 · P2 · `[IN REVIEW]` · Wire frontend to stub API
+### Step 10 · P2 · `[DONE]` · Wire frontend to stub API
 **Branch:** `p2/step-10-api-wiring`
 **Depends on:** Step 08 merged, Step 01 merged (stub API running)
 **What to build:**
@@ -299,7 +299,7 @@ P1 builds persona creation and chat generation. P2 wires the frontend to the rea
 
 ---
 
-### Step 11 · P1 · `[TODO]` · Chat engine + real API endpoints
+### Step 11 · P1 · `[DONE]` · Chat engine + real API endpoints
 **Branch:** `p1/step-11-chat-engine`
 **Depends on:** Step 09 merged
 **What to build:**
@@ -334,7 +334,7 @@ Both partners converge. P1 builds all demo personas and caches responses. P2 doe
 
 ---
 
-### Step 12 · P1 · `[TODO]` · Build all demo personas + cache responses
+### Step 12 · P1 · `[DONE]` · Build all demo personas + cache responses
 **Branch:** `p1/step-12-demo-data`
 **Depends on:** Step 11 merged
 **What to build:**
@@ -354,7 +354,7 @@ Both partners converge. P1 builds all demo personas and caches responses. P2 doe
 
 ---
 
-### Step 13 · P2 · `[IN REVIEW]` · Visual polish + error states + loading states
+### Step 13 · P2 · `[DONE]` · Visual polish + error states + loading states
 **Branch:** `p2/step-13-polish`
 **Depends on:** Step 10 merged
 **What to build:**

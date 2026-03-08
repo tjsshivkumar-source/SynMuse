@@ -1,0 +1,22 @@
+{
+  "name": "Maya",
+  "age": 28,
+  "location": "Hackney, East London",
+  "income": "£38,000",
+  "style_descriptor": "Conscious quiet luxury",
+  "profile": {
+    "shopping_behaviour": "Filters Vinted by fabric and manufacturing quality over brands. Mixes COS basics with secondhand European finds.",
+    "personality": "Resents mid-tier brands charging premium prices for low-quality fabrics. Excited by well-made pieces under £3. Obsessively tracks wardrobe purchases.",
+    "style_identity": "Seeks clean lines and natural fabrics via vintage hunting. Invests in quality leather footwear over trends. Pursues quiet luxury affordably."
+  },
+  "preview_description": "Maya haunts Vinted using searches like 'made in France 100% linen' to find overlooked vintage gems while everyone else chases Zara. She'll save for Repetto flats but thrifts her blazers. Sustainability matters, but so does her overdraft—she's mastered the art of looking expensive on a creative's salary.",
+  "preview_attributes": {
+    "age_location": "28 · Hackney, East London",
+    "income": "£38,000",
+    "key_brands": "COS, Weekday, Vinted, Massimo Dutti (vintage), Repetto, & Other Stories",
+    "style_identity": "Aspiring quiet luxury via secondhand quality pieces",
+    "shopping_triggers": "Finding undervalued vintage pieces with good fabric and construction; TikTok and Pinterest inspiration boards",
+    "pain_points": "Mid-range brands like Aritzia feeling identical to Shein quality; gaping at bust; having taste that exceeds budget"
+  },
+  "slug": "maya"
+}
